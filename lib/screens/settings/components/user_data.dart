@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:notes/controllers/user_future_controller.dart';
+import 'package:notes/controllers/user_stream_controller.dart';
 import 'package:notes/models/user_model.dart';
-import 'package:notes/screens/profile/components/avatar_list.dart';
+import 'package:notes/screens/settings/components/avatar_list.dart';
 import 'package:notes/utils/constants/color.dart';
 import 'package:notes/utils/constants/screenSize.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +17,7 @@ class UserData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
-    return UserFutureBuilder(
+    return UserStreamBuilder(
       uid: user!.uid,
       loading: CircleAvatar(
         radius: 60,
@@ -28,11 +28,11 @@ class UserData extends StatelessWidget {
         } else {
           UserModel userData = snapshot.data!;
           return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(
-                height: 15,
+                height: 90,
               ),
               Consumer<ProfileController>(
                 builder: (context, avatarController, _) {

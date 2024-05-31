@@ -1,12 +1,12 @@
-import 'dart:ui'; // Import for the ImageFilter class
+import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notes/services/chat_service.dart';
+import 'package:notes/utils/constants/color.dart';
 import 'package:provider/provider.dart';
 import 'package:random_string/random_string.dart';
-
-import '../../controllers/user_future_controller.dart';
+import '../../controllers/user_stream_controller.dart';
 import '../../models/user_model.dart';
 import '../../ui/background.dart';
 import 'components/drawer.dart';
@@ -28,24 +28,24 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
 
     return Scaffold(
       key: _scaffoldKey,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        shadowColor: Colors.transparent,
-        elevation: 0, // Remove shadow
+        surfaceTintColor: Colors.black.withOpacity(0.9),
+        backgroundColor: Colors.black.withOpacity(0.1),
         iconTheme: const IconThemeData(
-            color:
-                Colors.white), // Set the icon color to white or any other color
+            color: Colors.white), // Set the icon color to white or any other color
         title: const Text(
           'الغرف',
           style: TextStyle(
-              color: Colors
-                  .white), // Set the text color to white or any other color
+              color: Colors.white), // Set the text color to white or any other color
         ),
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -53,17 +53,17 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () {
               _scaffoldKey.currentState?.openDrawer();
             },
-            child: UserFutureBuilder(
+            child: UserStreamBuilder(
               uid: user!.uid,
               builder: (context, snapshot) {
                 UserModel userData = snapshot.data!;
 
                 return CircleAvatar(
-                                backgroundImage: AssetImage('assets/avatar/${userData.photoURL!}.jpeg'),
+                  backgroundImage: AssetImage('assets/avatar/${userData.photoURL!}.jpeg'),
                 );
                 // ignore: prefer_const_constructors
               },
-              loading: CircularProgressIndicator(),
+              loading: const CircleAvatar(),
             ),
           ),
         ),
@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         child: const Icon(Icons.add, size: 30, color: Colors.black),
-        onPressed: () {},
+        onPressed:(){},
       ),
     );
   }

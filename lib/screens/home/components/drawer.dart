@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes/models/user_model.dart';
-import 'package:notes/screens/profile/profile_screen.dart';
+import 'package:notes/screens/settings/settings_screen.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/ui/background.dart';
 import 'package:notes/utils/constants/assets_constants.dart';
@@ -11,7 +11,7 @@ import 'package:notes/utils/constants/color.dart';
 import 'package:provider/provider.dart';
 
 import '../../../controllers/chat_controller.dart';
-import '../../../controllers/user_future_controller.dart';
+import '../../../controllers/user_stream_controller.dart';
 import '../../../utils/constants/dilog.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -27,7 +27,7 @@ class MyDrawer extends StatelessWidget {
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              UserFutureBuilder(
+              UserStreamBuilder(
                   uid: user!.uid,
                   builder: (context, snapshot) {
                     UserModel userData = snapshot.data!;
@@ -91,7 +91,7 @@ class MyDrawer extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ProfileScreen(),
+                        builder: (context) => const SettingsScreen(),
                       ));                },
               ),
 

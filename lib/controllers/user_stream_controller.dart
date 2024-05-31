@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:notes/models/user_model.dart';
 import 'package:notes/services/auth_service.dart';
 
-class UserFutureBuilder extends StatelessWidget {
+class UserStreamBuilder extends StatelessWidget {
   final String uid;
-  final Widget Function(BuildContext, AsyncSnapshot) builder;
+  final Widget Function(BuildContext, AsyncSnapshot<UserModel?>) builder;
   final Widget loading;
 
-  const UserFutureBuilder({
+  const UserStreamBuilder({
     required this.uid,
     required this.builder,
-    required this.loading
+    required this.loading,
   });
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<UserModel?>(
-      future: AuthService().getUserDataByUid(uid),
+    return StreamBuilder<UserModel?>(
+      stream: AuthService().getUserDataStreamByUid(uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: loading);

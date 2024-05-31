@@ -6,19 +6,14 @@ import '../models/user_model.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Future<UserModel?> getUserDataByUid(String uid) async {
-    try {
-      DocumentSnapshot<Map<String, dynamic>> userDoc =
-          await _firestore.collection('users').doc(uid).get();
-      if (userDoc.exists) {
-        return UserModel.fromFirestore(userDoc.data()!);
+  Stream<UserModel?> getUserDataStreamByUid(String uid) {
+    return _firestore.collection('users').doc(uid).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        return UserModel.fromFirestore(snapshot.data()!);
       } else {
         return null;
       }
-    } catch (e) {
-      print('Error fetching user data: $e');
-      return null;
-    }
+    });
   }
 
 
@@ -72,7 +67,16 @@ class AuthService {
       return null;
     }
   }
+  Future<void> updateImageUrl(String uid, String pathImage) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'photoURL': pathImage,
+      });
 
+    } catch (e) {
+      print("Error updating image URL: $e");
+    }
+  }
   Future<void> signOut() async {
     try {
       await _auth.signOut();

@@ -5,7 +5,7 @@ import '../add_room/add_room.dart';
 import '../home/home_screen.dart';
 import '../main_screen/mian_screen.dart';
 import '../notes_screen/note_screen.dart';
-import '../profile/profile_screen.dart';
+import '../settings/settings_screen.dart';
 import 'sign_in_screen.dart';
 
 class AuthWrapper extends StatelessWidget {

@@ -22,7 +22,7 @@ class RoomsShape extends StatelessWidget {
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: GetThemeData(context).theme.highlightColor),
+            color: Colors.white.withOpacity(0.09)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
