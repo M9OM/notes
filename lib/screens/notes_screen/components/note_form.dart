@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/screens/chat_screen/chat_screen.dart';
+import '../../room_screen/room_screen.dart';
 import '/utils/constants/color.dart';
 import '/utils/constants/screenSize.dart';
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:notes/controllers/page_controller.dart';
+import 'package:notes/controllers/room_controller.dart';
 import 'package:notes/controllers/youtube_controller.dart';
 import '../services/auth_service.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,7 @@ import 'controllers/loading_controller.dart';
 import 'controllers/chat_controller.dart';
 import 'controllers/profile_controller.dart';
 import 'screens/auth/auth_wrapper.dart';
-import 'services/chat_service.dart';
+import 'services/room_service.dart';
 import 'utils/constants/color.dart';
 
 void main() async {
@@ -49,6 +50,8 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<ProfileController>(
           create: (_) => ProfileController(),
+        ),        ChangeNotifierProvider<RoomController>(
+          create: (_) => RoomController(),
         ),
       ],
       child: MaterialApp(

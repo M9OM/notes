@@ -11,7 +11,15 @@ BorderRadiusGeometry borderRadiusMe = const BorderRadius.all(
 
 TextStyle  myMsgStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.black, fontSize: 15);
 TextStyle  yourMsgStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 15);
+TextStyle  myMsgtimeStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.black, fontSize: 12,
+);
+TextStyle  yourMsgtimeStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 12,
+);
 
+
+
+
+                
 
 Color primary =const Color(0xFFCBFF97);
 

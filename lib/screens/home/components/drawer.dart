@@ -42,24 +42,25 @@ class MyDrawer extends StatelessWidget {
                       UserModel userData = snapshot.data!; // Updated this line
 
                       return InkWell(
-                        onTap: () {
-                          
-                        },
+                        onTap: () {},
                         child: SizedBox(
                           height: 170,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              CircleAvatar(
-                                radius: 35,
-                                backgroundImage: AssetImage('assets/avatar/${userData.photoURL!}.jpeg'),
-                              ),
-                        
-                              const SizedBox(
-                                height: 10,
-                              )
-                            ],
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                CircleAvatar(
+                                  radius: 35,
+                                  backgroundImage: AssetImage(
+                                      'assets/avatar/${userData.photoURL!}.jpeg'),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -69,15 +70,21 @@ class MyDrawer extends StatelessWidget {
                     height: 170,
                   )),
               ListTile(
-                leading: SvgPicture.asset(AssetsConstants.houseSvg,color: Colors.white,),
+                leading: SvgPicture.asset(
+                  AssetsConstants.houseSvg,
+                  color: Colors.white,
+                ),
                 title: const Text('الرئيسة'),
                 onTap: () {
                   Navigator.pop(context);
                   // Handle the Home action
                 },
               ),
-                          ListTile(
-                leading: SvgPicture.asset(AssetsConstants.friendsSvg,color: Colors.white,),
+              ListTile(
+                leading: SvgPicture.asset(
+                  AssetsConstants.friendsSvg,
+                  color: Colors.white,
+                ),
                 title: const Text('الاصدقاء'),
                 onTap: () {
                   Navigator.pop(context);
@@ -85,21 +92,24 @@ class MyDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: SvgPicture.asset(AssetsConstants.settingsSvg,color: Colors.white,),
+                leading: SvgPicture.asset(
+                  AssetsConstants.settingsSvg,
+                  color: Colors.white,
+                ),
                 title: const Text('الاعدادات'),
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const SettingsScreen(),
-                      ));                },
+                      ));
+                },
               ),
-
-
-
-
               ListTile(
-                leading: SvgPicture.asset(AssetsConstants.logOutSvg,color: Colors.white,),
+                leading: SvgPicture.asset(
+                  AssetsConstants.logOutSvg,
+                  color: Colors.white,
+                ),
                 title: const Text('تسجيل خروج'),
                 onTap: () {
                   showMsgDialog(

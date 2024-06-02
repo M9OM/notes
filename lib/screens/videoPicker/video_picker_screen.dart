@@ -42,11 +42,16 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
     final youtubeController = Provider.of<YoutubeController>(context);
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(72, 0, 0, 0),
         title: const Text('اختيار مقطع'),
       ),
       body: Mybackground(
         screens: [
+          SizedBox(
+            height: 130,
+          ),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: TextField(

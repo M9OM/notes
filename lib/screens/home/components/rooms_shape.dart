@@ -1,20 +1,32 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:notes/models/user_model.dart';
+import 'package:notes/route/route_screen.dart';
+import 'package:notes/screens/room_screen/room_screen.dart';
+import 'package:notes/services/room_service.dart';
 import 'package:notes/utils/constants/color.dart';
 import 'package:notes/utils/constants/screenSize.dart';
+import 'package:provider/provider.dart';
 
 class RoomsShape extends StatelessWidget {
   const RoomsShape(
       {super.key,
       required this.imageUrl,
       required this.title,
-      required this.subtitle});
+      required this.subtitle,
+      required this.roomId,
+      this.membersData});
   final String imageUrl;
   final String title;
   final String subtitle;
-
+  final String roomId;
+  final List<UserModel>? membersData;
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User?>(context);
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -28,17 +40,16 @@ class RoomsShape extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Row(
                 children: [
                   ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                          width: 60,
-                          imageUrl)),
-                  SizedBox(
+                      child: Image.asset(
+                          width: 60, 'assets/avatar/$imageUrl.jpeg')),
+                  const SizedBox(
                     width: 10,
                   ),
                   Column(
@@ -46,8 +57,8 @@ class RoomsShape extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style:
-                            TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                        style: const TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w700),
                       ),
                       Text(
                         subtitle,
@@ -57,53 +68,48 @@ class RoomsShape extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 15,
-                    backgroundImage: NetworkImage(
-                        'https://i.pinimg.com/564x/f4/60/7d/f4607d55aa1fb025cc5da6f7b7cea33b.jpg'),
+                  ...List.generate(
+                    membersData!.length > 3 ? 3 : membersData!.length,
+                    (index) => Padding(
+                      padding: const EdgeInsets.only(right: 5.0),
+                      child: CircleAvatar(
+                        radius: 15,
+                        backgroundImage: AssetImage(
+                            'assets/avatar/${membersData![index].photoURL!}.jpeg'),
+                      ),
+                    ),
                   ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  CircleAvatar(
-                    radius: 15,
-                    backgroundImage: NetworkImage(
-                        'https://i.pinimg.com/564x/a9/68/51/a9685154fa3f5791143c3e8a94289d9d.jpg'),
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  CircleAvatar(
-                    radius: 15,
-                    backgroundImage: NetworkImage(
-                        'https://i.pinimg.com/564x/1b/29/59/1b29599af9152a26df55135e70857572.jpg'),
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text('و ٥ اخرون')
+                  if (membersData!.length > 3)
+                    Text('  و ${membersData!.length - 3} اخرون'),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
-              Center(
-                  child: Container(
-                      alignment: AlignmentDirectional.center,
-                      decoration: BoxDecoration(
-                          border: Border.all(width: 1, color: Colors.grey),
-                          borderRadius: BorderRadius.circular(20)),
-                      padding: EdgeInsets.all(10),
-                      width: ScreenSizeExtension(context).screenWidth * 0.95,
-                      child: Text(
-                        'انضمام',
-                        style: TextStyle(color: Colors.white),
-                      )))
+              GestureDetector(
+                onTap: () {
+                  ChatService().joinRoom(roomId, user!.uid);
+                  navigateScreenWithoutGoBack(
+                      context, RoomScreen(roomId: roomId));
+                },
+                child: Center(
+                    child: Container(
+                        alignment: AlignmentDirectional.center,
+                        decoration: BoxDecoration(
+                            border: Border.all(width: 1, color: Colors.grey),
+                            borderRadius: BorderRadius.circular(20)),
+                        padding: const EdgeInsets.all(10),
+                        width: ScreenSizeExtension(context).screenWidth * 0.95,
+                        child: const Text(
+                          'انضمام',
+                          style: TextStyle(color: Colors.white),
+                        ))),
+              )
             ],
           ),
         ),

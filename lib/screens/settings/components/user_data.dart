@@ -17,78 +17,80 @@ class UserData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
-    return UserStreamBuilder(
-      uid: user!.uid,
-      loading: CircleAvatar(
-        radius: 60,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
-          return const Text('Error loading user data');
-        } else {
-          UserModel userData = snapshot.data!;
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 90,
-              ),
-              Consumer<ProfileController>(
-                builder: (context, avatarController, _) {
-                  return Stack(
-                    alignment: AlignmentDirectional.bottomStart,
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundImage: AssetImage(avatarController
-                                .pathImageAvatar.isEmpty
-                            ? 'assets/avatar/${userData.photoURL}.jpeg'
-                            : 'assets/avatar/${avatarController.pathImageAvatar}.jpeg'),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const AvatarList();
-                            },
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(3),
-                          decoration: BoxDecoration(
-                              border: Border.all(width: 3),
-                              color: primary,
-                              shape: BoxShape.circle),
-                          child: const Icon(
-                            Icons.edit,
-                            color: Colors.black,
+    return Center(
+      child: UserStreamBuilder(
+        uid: user!.uid,
+        loading: CircleAvatar(
+          radius: 60,
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+            return const Text('Error loading user data');
+          } else {
+            UserModel userData = snapshot.data!;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 90,
+                ),
+                Consumer<ProfileController>(
+                  builder: (context, avatarController, _) {
+                    return Stack(
+                      alignment: AlignmentDirectional.bottomStart,
+                      children: [
+                        CircleAvatar(
+                          radius: 60,
+                          backgroundImage: AssetImage(avatarController
+                                  .pathImageAvatar.isEmpty
+                              ? 'assets/avatar/${userData.photoURL}.jpeg'
+                              : 'assets/avatar/${avatarController.pathImageAvatar}.jpeg'),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const AvatarList();
+                              },
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                                border: Border.all(width: 3),
+                                color: primary,
+                                shape: BoxShape.circle),
+                            child: const Icon(
+                              Icons.edit,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                userData.username!,
-                style: const TextStyle(fontSize: 17),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                userData.email!,
-                style: const TextStyle(fontSize: 15, color: Colors.grey),
-              )
-            ],
-          );
-        }
-      },
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  userData.username!,
+                  style: const TextStyle(fontSize: 17),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  userData.email!,
+                  style: const TextStyle(fontSize: 15, color: Colors.grey),
+                )
+              ],
+            );
+          }
+        },
+      ),
     );
   }
 }

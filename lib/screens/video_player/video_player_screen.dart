@@ -1,3 +1,4 @@
+import 'package:notes/utils/constants/color.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -23,9 +24,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     super.initState();
     _controller = YoutubePlayerController(
       initialVideoId: widget.videoId,
-      flags: YoutubePlayerFlags(
-        mute: false,
-      ),
+      flags: YoutubePlayerFlags(mute: false, showLiveFullscreenButton: false),
     );
 
     _videoRef = FirebaseDatabase.instance.reference().child('video');
@@ -37,14 +36,20 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return  Center(
-        child: AspectRatio(
-          aspectRatio: 16/9, // You can adjust this ratio as needed
-          child: YoutubePlayer(
-            controller: _controller,
-            showVideoProgressIndicator: true,
+    return Center(
+      child: AspectRatio(
+        aspectRatio: 16 / 9, // You can adjust this ratio as needed
+        child: YoutubePlayer(
+          controlsTimeOut: const Duration(seconds: 100),
+          progressIndicatorColor: primary,
+          controller: _controller,
+          progressColors: ProgressBarColors(
+            playedColor: primary, // لون الجزء المشغل
+            handleColor: primary, // لون المقبض
+            backgroundColor: primary.withOpacity(0.5), // لون الخلفية
           ),
-        
+          showVideoProgressIndicator: true,
+        ),
       ),
     );
   }

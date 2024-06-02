@@ -22,6 +22,7 @@ class Mybackground extends StatelessWidget {
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: screens,
         ),
       ),

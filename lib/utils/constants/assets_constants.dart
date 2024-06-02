@@ -23,6 +23,7 @@ static const String logOutSvg = "$path/exit.svg";
 static const String heartSvg = "$path/heart1.svg";
 static const String trashSvg = "$path/trash.svg";
 static const String upgradeSvg = "$path/gem.svg";
+static const String gameSvg = "$path/game.svg";
 
 
 static const String friendsSvg = "$path/users-alt.svg";

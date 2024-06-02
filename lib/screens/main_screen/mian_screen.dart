@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes/screens/chat_screen/chat_screen.dart';
+import 'package:notes/screens/room_screen/room_screen.dart';
 import 'package:notes/screens/home/home_screen.dart';
 import 'package:notes/screens/main_screen/components/bottomBarWidget.dart';
 

@@ -2,12 +2,14 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:notes/services/chat_service.dart';
+import 'package:notes/screens/add_room/add_room.dart';
+import 'package:notes/services/room_service.dart';
 import 'package:notes/utils/constants/color.dart';
 import 'package:provider/provider.dart';
 import 'package:random_string/random_string.dart';
 import '../../controllers/user_stream_controller.dart';
 import '../../models/user_model.dart';
+import '../../route/route_screen.dart';
 import '../../ui/background.dart';
 import 'components/drawer.dart';
 import 'components/rooms_list.dart';
@@ -28,8 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
@@ -41,11 +41,13 @@ class _HomeScreenState extends State<HomeScreen> {
         surfaceTintColor: Colors.black.withOpacity(0.9),
         backgroundColor: Colors.black.withOpacity(0.1),
         iconTheme: const IconThemeData(
-            color: Colors.white), // Set the icon color to white or any other color
+            color:
+                Colors.white), // Set the icon color to white or any other color
         title: const Text(
           'الغرف',
           style: TextStyle(
-              color: Colors.white), // Set the text color to white or any other color
+              color: Colors
+                  .white), // Set the text color to white or any other color
         ),
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -59,7 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 UserModel userData = snapshot.data!;
 
                 return CircleAvatar(
-                  backgroundImage: AssetImage('assets/avatar/${userData.photoURL!}.jpeg'),
+                  backgroundImage:
+                      AssetImage('assets/avatar/${userData.photoURL!}.jpeg'),
                 );
                 // ignore: prefer_const_constructors
               },
@@ -78,12 +81,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: const MyDrawer(),
       body: Mybackground(
-        screens: [const Expanded(child: RoomsList())],
+        screens: const [Expanded(child: RoomsList())],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         child: const Icon(Icons.add, size: 30, color: Colors.black),
-        onPressed:(){},
+        onPressed: () {
+          navigateToCreateRoomScreen(context, const AddRoomScreen());
+        },
       ),
     );
   }

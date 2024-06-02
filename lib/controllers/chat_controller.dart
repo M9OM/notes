@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '/services/chat_service.dart';
+import '../services/room_service.dart';
 import '/utils/constants/color.dart';
 import 'package:record/record.dart';
 import 'package:path/path.dart' as p;

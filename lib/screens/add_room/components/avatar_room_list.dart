@@ -1,21 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:notes/controllers/room_controller.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/utils/constants/screenSize.dart';
 import 'package:provider/provider.dart';
 
 import '../../../controllers/profile_controller.dart';
 
-class AvatarList extends StatelessWidget {
-  const AvatarList({Key? key});
+class AvatarRoomList extends StatelessWidget {
+  const AvatarRoomList({Key? key});
 
   @override
   Widget build(BuildContext context) {
-    // List of avatar image paths
-    List<String> pathAvatar = [
-      'assets/avatar/0.jpeg',
-      'assets/avatar/1.jpeg', // Add more paths here as needed
-    ];
+
     final user = Provider.of<User?>(context);
 
     return Container(
@@ -33,15 +30,19 @@ class AvatarList extends StatelessWidget {
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () async {
-                await AuthService().updateImageUrl(user!.uid, index.toString());
 
-                Provider.of<ProfileController>(context, listen: false)
-                    .setImageAvatar(index.toString());
+                Provider.of<RoomController>(context, listen: false)
+                    .setImageRoomAvatar(index.toString());
+                                            Navigator.pop(context);
+
+
+
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  backgroundImage: AssetImage('assets/avatar/$index.jpeg'),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(40),
+                  child: Image.asset('assets/avatar/$index.jpeg'),
                 ),
               ),
             );
