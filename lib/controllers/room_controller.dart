@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:notes/utils/constants/lang/str_extntion.dart';
+import 'package:notes/utils/constants/lang/translate_constat.dart';
 import 'package:notes/utils/enum/RoomType.dart';
 
 RoomType? selectedRoomType;
 
-String getTypeName(RoomType type) {
+String getTypeName(RoomType type , BuildContext context) {
   switch (type) {
     case RoomType.public:
-      return 'عامة';
+      return TranslationConstants.general.t(context);
     case RoomType.games:
-      return 'العاب';
+      return TranslationConstants.general.t(context);
     case RoomType.politics:
-      return 'سياسة';
+      return TranslationConstants.politics.t(context);
     case RoomType.history:
-      return 'تاريخ';
+      return TranslationConstants.history.t(context);
     case RoomType.programming:
-      return 'برمجة';
+      return TranslationConstants.programing.t(context);
     case RoomType.cooking:
-      return 'طبخ';
+      return TranslationConstants.cooking.t(context);
     case RoomType.travel:
-      return 'السفر';
+      return TranslationConstants.travel.t(context);
     case RoomType.reading:
-      return 'القراءة';
+      return TranslationConstants.reading.t(context);
     case RoomType.science:
-      return 'العلوم';
+      return TranslationConstants.science.t(context);
   }
 }
 

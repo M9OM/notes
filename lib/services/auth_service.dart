@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:notes/services/send_email_service.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../models/user_model.dart';
 
@@ -16,7 +18,35 @@ class AuthService {
     });
   }
 
+  Future<User?> getCurrentUser() async {
+    return _auth.currentUser;
+  }
 
+  Future<UserModel?> getCurrentUserData() async {
+    final currentUser = await _auth.currentUser;
+    if (currentUser != null) {
+      final userDataSnapshot =
+          await _firestore.collection('users').doc(currentUser.uid).get();
+      if (userDataSnapshot.exists) {
+        return UserModel.fromFirestore(
+            userDataSnapshot.data() as Map<String, dynamic>);
+      }
+    }
+    return null;
+  }
+
+  Future<UserModel?> getDataUser(String uid) async {
+    final currentUser = await _auth.currentUser;
+    if (currentUser != null) {
+      final userDataSnapshot =
+          await _firestore.collection('users').doc(uid).get();
+      if (userDataSnapshot.exists) {
+        return UserModel.fromFirestore(
+            userDataSnapshot.data() as Map<String, dynamic>);
+      }
+    }
+    return null;
+  }
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
   Future<User?> signInAnonymously() async {
@@ -36,19 +66,21 @@ class AuthService {
           email: email, password: password);
       User? user = result.user;
       UserModel newUser = UserModel(
-        uid: user!.uid,
-        email: email,
-        username: username,
-        photoURL: '',
-        createdAt: Timestamp.now(),
-        lastOnline: Timestamp.now(),
-        interest: [],
-      );
+          uid: user!.uid,
+          email: email,
+          username: username,
+          photoURL: '26',
+          createdAt: Timestamp.now(),
+          lastOnline: Timestamp.now(),
+          interest: [],
+          followers: [],
+          playerId: OneSignal.User.pushSubscription.id,
+          following: []);
+
       await _firestore
           .collection('users')
           .doc(user.uid)
           .set(newUser.toFirestore());
-
       return user;
     } catch (e) {
       print(e.toString());
@@ -67,19 +99,31 @@ class AuthService {
       return null;
     }
   }
+
   Future<void> updateImageUrl(String uid, String pathImage) async {
     try {
       await FirebaseFirestore.instance.collection('users').doc(uid).update({
         'photoURL': pathImage,
       });
-
     } catch (e) {
       print("Error updating image URL: $e");
     }
   }
+
+  Future<void> removePlayerId(String uid) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'playerId': '',
+      });
+    } catch (e) {
+      print("Error updating image URL: $e");
+    }
+  }
+
   Future<void> signOut() async {
     try {
       await _auth.signOut();
+      removePlayerId(_auth.currentUser!.uid);
     } catch (e) {
       print(e.toString());
     }

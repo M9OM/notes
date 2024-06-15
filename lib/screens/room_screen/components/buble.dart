@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,7 +41,6 @@ class _BubleState extends State<Buble> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   List<Likes> _likes = [];
-  bool showPreview = false;
 
   @override
   void initState() {
@@ -101,141 +100,138 @@ class _BubleState extends State<Buble> with SingleTickerProviderStateMixin {
 
     return Padding(
       padding: const EdgeInsets.all(5.0),
-      child: Column(
-        crossAxisAlignment:
-            widget.isMe ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-        children: [
-          Container(
-            alignment:
-                widget.isMe ? Alignment.centerRight : Alignment.centerLeft,
-            child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: Column(
+          children: [
+            Row(
+              textDirection: ui.TextDirection.ltr,
               children: [
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 300),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(15),
-                    onDoubleTap: () async {
-                      HapticFeedback.mediumImpact();
-                      final like = Likes(userId: user!.uid, emoji: '💚');
-                
-                      await ChatService().reactionMsg(
-                        like,
-                        user.uid,
-                        widget.id,
-                        widget.roomId,
-                      );
-                      if (!_likes.any((l) =>
-                          l.userId == like.userId && l.emoji == like.emoji)) {
-                        _addLike(like);
-                      }
-                    },
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: widget.isMe
-                                ? theme.highlightColor
-                                : theme.primaryColor,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.text.trim(),
-                                style: widget.isMe ? yourMsgStyle : myMsgStyle,
-                                
-                              ),
-                              Text(
-                                  dateFormat.format(dateTime),
-                                style: widget.isMe ? yourMsgtimeStyle : myMsgtimeStyle,
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: CircleAvatar(
+                    backgroundImage:
+                        AssetImage('assets/avatar/${widget.avatar}.jpeg'),
+                    radius: 15,
                   ),
                 ),
-                                                    const SizedBox(
-                      width: 10,
-                    ),
-                    if (!widget.isMe)
-                      CircleAvatar(
-                        backgroundImage:
-                            AssetImage('assets/avatar/${widget.avatar}.jpeg'),
-                        radius: 15,
-                      ),
+                Container(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 270),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(15),
+                          onDoubleTap: () async {
+                            HapticFeedback.mediumImpact();
+                            final like = Likes(userId: user!.uid, emoji: '💚');
 
-              ],
-            ),
-          ),
-          const SizedBox(height: 3),
-          if (emojiCount.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-              child: Row(
-                mainAxisAlignment: widget.isMe
-                    ? MainAxisAlignment.start
-                    : MainAxisAlignment.end,
-                children: emojiCount.entries.map((entry) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: InkWell(
-                      onTap: () {
-                        HapticFeedback.mediumImpact();
-                        final like = Likes(userId: user!.uid, emoji: '💚');
-                        _removeLike(like);
-
-                        ChatService().removeReactionMsg(
-                          like,
-                          user.uid,
-                          widget.id,
-                          widget.roomId,
-                        );
-                      },
-                      child: ScaleTransition(
-                        scale: entry.key == '💚'
-                            ? _scaleAnimation
-                            : const AlwaysStoppedAnimation(1.0),
-                        child: Container(
-                          padding: const EdgeInsets.all(3),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                '${entry.key}',
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
+                            await ChatService().reactionMsg(
+                              like,
+                              user.uid,
+                              widget.id,
+                              widget.roomId,
+                            );
+                            if (!_likes.any((l) =>
+                                l.userId == like.userId &&
+                                l.emoji == like.emoji)) {
+                              _addLike(like);
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: theme.highlightColor,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.username.trim(),
+                                  style: yourNameMsgStyle,
                                 ),
-                              ),
-                              Text(
-                                '${entry.value > 1 ? entry.value : '1'}',
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
+                                Text(
+                                  widget.text.trim(),
+                                  style: yourMsgStyle,
                                 ),
-                              ),
-                            ],
+                                Text(
+                                  dateFormat.format(dateTime),
+                                  style: yourMsgtimeStyle,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
+                    ],
+                  ),
+                ),
+              ],
             ),
+            if (emojiCount.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 3),
+                child: Row(
+                  mainAxisAlignment: widget.isMe
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.end,
+                  children: emojiCount.entries.map((entry) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: InkWell(
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          final like = Likes(userId: user!.uid, emoji: '💚');
+                          _removeLike(like);
 
-        ],
+                          ChatService().removeReactionMsg(
+                            like,
+                            user.uid,
+                            widget.id,
+                            widget.roomId,
+                          );
+                        },
+                        child: ScaleTransition(
+                          scale: entry.key == '💚'
+                              ? _scaleAnimation
+                              : const AlwaysStoppedAnimation(1.0),
+                          child: Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '${entry.key}',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Text(
+                                  '${entry.value > 1 ? entry.value : '1'}',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

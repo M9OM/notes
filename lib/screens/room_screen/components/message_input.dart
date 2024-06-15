@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:notes/utils/constants/lang/str_extntion.dart';
 import 'package:provider/provider.dart';
 import '../../../controllers/chat_controller.dart';
 import '../../../utils/constants/color.dart';
+import '../../../utils/constants/lang/translate_constat.dart';
 import '../../videoPicker/video_picker_screen.dart';
 
 class MessageInput extends StatefulWidget {
@@ -74,7 +76,7 @@ class _MessageInputState extends State<MessageInput>
               style: const TextStyle(),
               controller: chatController.messageController,
               decoration: InputDecoration(
-                hintText: 'اكتب...',
+                hintText: TranslationConstants.write.t(context),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide(
@@ -98,37 +100,37 @@ class _MessageInputState extends State<MessageInput>
                     width: 2,
                   ),
                 ),
-                suffixIcon: ValueListenableBuilder<bool>(
+                prefixIcon: ValueListenableBuilder<bool>(
                   valueListenable: isInputEmpty,
                   builder: (context, value, child) {
                     return Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        InkWell(
-                          onTap: () async {
-                            final selectedVideo = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => VideoPickerScreen()),
-                            );
-                            if (selectedVideo != null) {
-                              // Handle selected video
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                                padding: const EdgeInsets.all(9),
-                                decoration: BoxDecoration(
-                                  color: theme.primaryColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.play_circle_fill,
-                                  color: Colors.black,
-                                )),
-                          ),
-                        ),
+                        // InkWell(
+                        //   onTap: () async {
+                        //     final selectedVideo = await Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //           builder: (context) => VideoPickerScreen()),
+                        //     );
+                        //     if (selectedVideo != null) {
+                        //       // Handle selected video
+                        //     }
+                        //   },
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.all(8.0),
+                        //     child: Container(
+                        //         padding: const EdgeInsets.all(9),
+                        //         decoration: BoxDecoration(
+                        //           color: theme.primaryColor,
+                        //           shape: BoxShape.circle,
+                        //         ),
+                        //         child: Icon(
+                        //           Icons.play_circle_fill,
+                        //           color: Colors.black,
+                        //         )),
+                        //   ),
+                        // ),
                         value
                             ? const SizedBox.shrink()
                             : ScaleTransition(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,17 +30,17 @@ class _MessageListState extends State<MessageList> {
     super.initState();
     _listScrollController = ScrollController();
   }
+final timeNow = Timestamp.now();
 
   @override
   Widget build(BuildContext context) {
     final chatService = Provider.of<ChatService>(context);
     final user = Provider.of<User?>(context);
-
     return StreamBuilder<List<Map<String, dynamic>>>(
-      stream: chatService.getMessagesWithUserData(widget.roomId),
+      stream: chatService.getMessagesWithUserData(widget.roomId,timeNow),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         final messagesWithUserData = snapshot.data!;
 

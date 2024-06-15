@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notes/controllers/youtube_controller.dart';
+import 'package:notes/services/room_service.dart';
 import 'package:notes/ui/background.dart';
 import 'package:notes/utils/constants/color.dart';
+import 'package:notes/utils/constants/lang/str_extntion.dart';
+import 'package:notes/utils/constants/lang/translate_constat.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart' as youtube;
 
 class VideoPickerScreen extends StatefulWidget {
   @override
+
+    const VideoPickerScreen({
+    Key? key,
+    required this.roomId,
+  }) : super(key: key);
+
+  final String roomId;
+
   _VideoPickerScreenState createState() => _VideoPickerScreenState();
 }
 
@@ -39,17 +50,17 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final youtubeController = Provider.of<YoutubeController>(context);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(72, 0, 0, 0),
-        title: const Text('اختيار مقطع'),
+        backgroundColor: const Color.fromARGB(72, 0, 0, 0),
+        title:  Text(TranslationConstants.select_clip.t(context)),
       ),
       body: Mybackground(
+        mainAxisAlignment  : MainAxisAlignment.start,
         screens: [
-          SizedBox(
+          const SizedBox(
             height: 130,
           ),
           Padding(
@@ -57,7 +68,9 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'ابحث عن فيديو',
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: primary)),
+                enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                hintText: TranslationConstants.search_video.t(context),
                 suffixIcon: InkWell(
                   onTap: () async {
                     setState(() {
@@ -77,7 +90,7 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
                           color: primary,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           weight: 30,
                           size: 30,
                           Icons.search,
@@ -89,7 +102,7 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
             ),
           ),
           if (loading)
-            Expanded(
+            const Expanded(
               child: Center(
                 child: CircularProgressIndicator(),
               ),
@@ -102,8 +115,7 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
                   var video = _searchResults[index];
                   return InkWell(
                     onTap: () {
-                      youtubeController.setVideoId(video.thumbnails.videoId);
-
+                      ChatService().setVideo(widget.roomId,video.thumbnails.videoId );
                       Navigator.pop(context, video);
                     },
                     borderRadius: BorderRadius.circular(20),
@@ -112,7 +124,7 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 color:
@@ -123,9 +135,11 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
                                 ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
                                     child: Image.network(
+                                              fit: BoxFit.cover,
+
                                       video.thumbnails.highResUrl,
                                     )),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Padding(
@@ -138,7 +152,7 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
                                       Text(
                                         video.title,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
                                       Text(video.author),

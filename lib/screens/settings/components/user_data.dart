@@ -28,6 +28,16 @@ class UserData extends StatelessWidget {
             return const Text('Error loading user data');
           } else {
             UserModel userData = snapshot.data!;
+
+
+              String username = userData.username ?? '';
+              if (username.length > 35) {
+                username = username.substring(0, 35)+' ...';
+              }
+          String email = userData.email ?? '';
+              if (email.length > 35) {
+                email = email.substring(0, 35)+' ...';
+              }
             return Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -76,14 +86,14 @@ class UserData extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  userData.username!,
+                  username!,
                   style: const TextStyle(fontSize: 17),
                 ),
                 const SizedBox(
                   height: 5,
                 ),
                 Text(
-                  userData.email!,
+                  email!,
                   style: const TextStyle(fontSize: 15, color: Colors.grey),
                 )
               ],

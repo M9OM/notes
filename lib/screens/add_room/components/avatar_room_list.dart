@@ -12,7 +12,6 @@ class AvatarRoomList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final user = Provider.of<User?>(context);
 
     return Container(
@@ -30,19 +29,18 @@ class AvatarRoomList extends StatelessWidget {
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () async {
-
                 Provider.of<RoomController>(context, listen: false)
                     .setImageRoomAvatar(index.toString());
-                                            Navigator.pop(context);
-
-
-
+                Navigator.pop(context);
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(40),
-                  child: Image.asset('assets/avatar/$index.jpeg'),
+                  child: Image.asset(
+                    'assets/avatar/$index.jpeg',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             );

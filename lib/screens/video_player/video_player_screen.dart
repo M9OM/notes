@@ -40,7 +40,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
       child: AspectRatio(
         aspectRatio: 16 / 9, // You can adjust this ratio as needed
         child: YoutubePlayer(
-          controlsTimeOut: const Duration(seconds: 100),
           progressIndicatorColor: primary,
           controller: _controller,
           progressColors: ProgressBarColors(

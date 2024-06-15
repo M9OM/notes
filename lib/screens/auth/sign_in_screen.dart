@@ -20,7 +20,10 @@ class SignInScreen extends StatelessWidget {
       return ModalProgressHUD(
         inAsyncCall: authController.isloading,
         child: Scaffold(
-          body: Mybackground(screens: [
+          body: Mybackground(
+            
+            mainAxisAlignment  : MainAxisAlignment.center,
+            screens: [
             FadeInUp(
               duration: const Duration(milliseconds: 1500),
               child: GradientText(

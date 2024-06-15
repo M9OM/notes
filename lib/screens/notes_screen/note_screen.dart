@@ -12,7 +12,9 @@ class NoteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Mybackground(screens: [
+      body: Mybackground(
+        mainAxisAlignment  : MainAxisAlignment.center,
+        screens: [
         const SizedBox(
           height: 50,
         ),

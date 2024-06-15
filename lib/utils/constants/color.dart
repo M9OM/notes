@@ -3,11 +3,12 @@ EdgeInsetsGeometry padding = const EdgeInsets.all(15);
 AlignmentGeometry meAlignment = Alignment.topRight;
 AlignmentGeometry aiAlignment = Alignment.topLeft;
 BorderRadiusGeometry borderRadiusOther = const BorderRadius.all(
-  Radius.circular(20),
+  Radius.circular(50),
 );
 BorderRadiusGeometry borderRadiusMe = const BorderRadius.all(
-  Radius.circular(20),
+  Radius.circular(50),
 );
+TextStyle  yourNameMsgStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 16);
 
 TextStyle  myMsgStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.black, fontSize: 15);
 TextStyle  yourMsgStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 15);

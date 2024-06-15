@@ -1,17 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Member {
   final String uid;
-  final bool isAdmin;
+  late final bool isAdmin;
+  final Timestamp timestamp;
 
   Member({
     required this.uid,
     required this.isAdmin,
+    required this.timestamp,
   });
 
-  // Convert a Member object into a map for Firebase
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
       'isAdmin': isAdmin,
+      'timestamp': timestamp,
     };
   }
 
@@ -20,6 +24,7 @@ class Member {
     return Member(
       uid: map['uid'],
       isAdmin: map['isAdmin'],
+      timestamp: map['timestamp'],
     );
   }
 }

@@ -9,7 +9,6 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class ChatController with ChangeNotifier {
   final ChatService _chatService = ChatService();
@@ -24,12 +23,8 @@ class ChatController with ChangeNotifier {
 
   bool get isRecording => _isRecording;
 
-  Future<bool> _checkPermission() async {
-    final status = await Permission.microphone.request();
-    return status.isGranted;
-  }
   Future<void> _init() async {
-    await _requestPermissions();
+    // await _requestPermissions();
   }
   ChatController() {
     _init();
@@ -47,43 +42,35 @@ class ChatController with ChangeNotifier {
     _isSending = false;
     notifyListeners();
   }
-Future<void> toggleRecording(BuildContext context) async {
-  _requestMicrophonePermission(context);
-  if (_isRecording) {
-    // Stop recording
-    if (await _audioRecorder.isRecording()) {
-      _recordingPath = await _audioRecorder.stop();
-      _isRecording = false;
-    }
-  } else {
-    // Request microphone permission
-    final bool hasPermission = await _requestPermissions();
-    if (!hasPermission) {
-      print('Microphone permission not granted.');
-      // Handle permission denial here (e.g., show a message to the user)
-      return;
-    }
+// Future<void> toggleRecording(BuildContext context) async {
+//   if (_isRecording) {
+//     // Stop recording
+//     if (await _audioRecorder.isRecording()) {
+//       _recordingPath = await _audioRecorder.stop();
+//       _isRecording = false;
+//     }
+//   } else {
+//     // Request microphone permission
+//     if (!hasPermission) {
+//       print('Microphone permission not granted.');
+//       // Handle permission denial here (e.g., show a message to the user)
+//       return;
+//     }
 
-    // Start recording
-    final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
-    final String filePath = p.join(appDocumentsDir.path, 'recording_${DateTime.now().millisecondsSinceEpoch}.wav');
-    await _audioRecorder.start(
-      const RecordConfig(),
-      path: filePath,
-    );
-    _isRecording = true;
-    _recordingPath = null;
-  }
-  notifyListeners();
-}
+//     // Start recording
+//     final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
+//     final String filePath = p.join(appDocumentsDir.path, 'recording_${DateTime.now().millisecondsSinceEpoch}.wav');
+//     await _audioRecorder.start(
+//       const RecordConfig(),
+//       path: filePath,
+//     );
+//     _isRecording = true;
+//     _recordingPath = null;
+//   }
+//   notifyListeners();
+// }
 
-Future<bool> _requestPermissions() async {
-  final Map<Permission, PermissionStatus> statuses = await [
-    Permission.microphone,
-    Permission.storage,
-  ].request();
-  return statuses[Permission.microphone] == PermissionStatus.granted;
-}
+
 
   Future<void> playRecording() async {
     if (_recordingPath != null) {
@@ -119,19 +106,11 @@ Future<bool> _requestPermissions() async {
       print('Error sending audio message: $e');
     }
   }
-void _requestMicrophonePermission(BuildContext context) async {
-  final PermissionStatus status = await Permission.microphone.request();
-  if (status != PermissionStatus.granted) {
-  } else {
-    // Microphone permission granted
-    // You can proceed with recording or any other operation requiring microphone access
-  }
-}
+
 
   Widget recordingButton(BuildContext context) {
     return IconButton(
       onPressed:() {
-        toggleRecording(context);
       },
       icon: Icon(_isRecording ? Icons.stop : Icons.mic),
     );

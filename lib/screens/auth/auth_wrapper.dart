@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:notes/screens/auth/login_screen.dart';
+import 'package:notes/services/notification_service.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../add_room/add_room.dart';
 import '../home/home_screen.dart';
-import '../main_screen/mian_screen.dart';
-import '../notes_screen/note_screen.dart';
-import '../settings/settings_screen.dart';
-import 'sign_in_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -15,10 +13,11 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
 
-    if (user == null) {
-      return  SignInScreen();
-    } else {
-      return  HomeScreen();
+    if (user != null) {
+      print(OneSignal.User.pushSubscription.id);
+      NotificationsService().savePlayerIdToFirestore(
+          OneSignal.User.pushSubscription.id.toString(), user.uid);
     }
+    return user == null ? const LoginScreen() : const HomeScreen();
   }
 }

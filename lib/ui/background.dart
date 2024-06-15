@@ -5,8 +5,9 @@ import 'package:flutter/widgets.dart';
 
 // ignore: must_be_immutable
 class Mybackground extends StatelessWidget {
-  Mybackground({super.key, required this.screens});
+  Mybackground({super.key, required this.screens, required this.mainAxisAlignment});
   List<Widget> screens;
+  MainAxisAlignment mainAxisAlignment;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,11 +18,11 @@ class Mybackground extends StatelessWidget {
                 Colors.black.withOpacity(0.7), // Adjust the opacity here
                 BlendMode.darken,
               ),
-              image: AssetImage('assets/icon/bg.png'),
+              image: const AssetImage('assets/icon/bg.png'),
               fit: BoxFit.cover)),
       child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: mainAxisAlignment,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: screens,
         ),

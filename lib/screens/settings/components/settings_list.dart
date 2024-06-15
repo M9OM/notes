@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../models/settingsModel.dart';
+import '../../../models/settings_model.dart';
+
+
 
 class SettingsList extends StatelessWidget {
   const SettingsList({Key? key}) : super(key: key);
@@ -9,8 +11,9 @@ class SettingsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: List.generate(SettingsModel.SettingsList.length, (index) {
-        final setting = SettingsModel.SettingsList[index];
+      children:
+          List.generate(SettingsModel.getSettingsList(context).length, (index) {
+        final setting = SettingsModel.getSettingsList(context)[index];
         return ListTile(
           trailing: Icon(Icons.arrow_forward_ios, size: 20),
           leading: Container(
@@ -24,7 +27,7 @@ class SettingsList extends StatelessWidget {
           title: Text(setting.title),
           subtitle: Text(setting.subtitle),
           onTap: () {
-            // Add onTap functionality here if needed
+            setting.onTap!(context);
           },
         );
       }),
