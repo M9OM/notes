@@ -6,6 +6,8 @@ class TranslationConstants {
   static const String do_u_want_report_this_room = 'do_u_want_report_this_room';
   static const String block = 'block';
   static const String block_subtitle = 'block_subtitle';
+  static const String for_you = 'for_you';
+  static const String following = 'following';
 
   static const String yes = 'yes';
   static const String no = 'no';

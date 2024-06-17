@@ -61,7 +61,9 @@
     "english": "English",
     "languages": "Languages",
     "block": "Block",
-    "block_subtitle": "Manage the Block List"
+    "block_subtitle": "Manage the Block List",
+    "for_you": "For you",
+    "following": "Following"
 
 
 }

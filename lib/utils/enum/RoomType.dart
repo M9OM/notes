@@ -1,10 +1,10 @@
 enum RoomType {
-  games,
+  public,
   politics,
   history,
   programming,
   cooking,
-  public,
+  games,
   travel,
   reading,
   science,

@@ -1,25 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notes/models/user_model.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:notes/screens/home/components/rooms_shape.dart';
 import 'package:notes/services/room_service.dart';
 import 'package:notes/models/rooms_model.dart';
-
-class RoomsList extends StatefulWidget {
-  const RoomsList({super.key});
+class RoomHomeList extends StatefulWidget {
+  const RoomHomeList({super.key});
 
   @override
-  _RoomsListState createState() => _RoomsListState();
+  _RoomHomeListState createState() => _RoomHomeListState();
 }
 
-class _RoomsListState extends State<RoomsList> {
-  
+class _RoomHomeListState extends State<RoomHomeList> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-  List<Rooms?> _roomsList = [];
+  List<Rooms?> _RoomHomeList = [];
   DocumentSnapshot? _lastDocument;
   bool _hasMore = true;
 
@@ -37,31 +40,50 @@ class _RoomsListState extends State<RoomsList> {
       });
     }
 
+    List<String> followedUserIds = await _getFollowedUserIds();
+    if (followedUserIds.isEmpty) {
+      setState(() {
+        _RoomHomeList = []; // No rooms to display
+      });
+      if (isRefresh) {
+        _refreshController.refreshCompleted();
+      } else {
+        _refreshController.loadComplete();
+      }
+      return;
+    }
+
     RoomService roomService = RoomService();
     List<DocumentSnapshot> roomSnapshots =
-        await roomService.getRooms(startAfter: _lastDocument, limit: 5);
+        await roomService.getRoomsHome(startAfter: _lastDocument, limit: 5);
 
     List<Rooms?> newRooms = [];
     for (var roomSnapshot in roomSnapshots) {
       Rooms room =
           Rooms.fromFirestore(roomSnapshot.data() as Map<String, dynamic>);
 
-      List<UserModel> membersData = [];
-      for (var member in room.membersId) {
-        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(member.uid)
-            .get();
-        if (userSnapshot.exists) {
-          UserModel user = UserModel.fromFirestore(
-              userSnapshot.data() as Map<String, dynamic>);
-          user.isAdmin = member.isAdmin ?? false;
-          membersData.add(user);
-        }
-      }
+      // Filter rooms based on followed user IDs
+      bool hasFollowedMember = room.membersId.any((member) {
+        return followedUserIds.contains(member.uid);
+      });
 
-      room.membersData = membersData;
-      newRooms.add(room);
+      if (hasFollowedMember) {
+        List<UserModel> membersData = [];
+        for (var member in room.membersId) {
+          DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(member.uid)
+              .get();
+          if (userSnapshot.exists) {
+            UserModel user = UserModel.fromFirestore(
+                userSnapshot.data() as Map<String, dynamic>);
+            user.isAdmin = member.isAdmin ?? false;
+            membersData.add(user);
+          }
+        }
+        room.membersData = membersData;
+        newRooms.add(room);
+      }
     }
 
     if (roomSnapshots.isNotEmpty) {
@@ -72,9 +94,9 @@ class _RoomsListState extends State<RoomsList> {
 
     setState(() {
       if (isRefresh) {
-        _roomsList = newRooms;
+        _RoomHomeList = newRooms;
       } else {
-        _roomsList.addAll(newRooms);
+        _RoomHomeList.addAll(newRooms);
       }
     });
 
@@ -83,6 +105,22 @@ class _RoomsListState extends State<RoomsList> {
     } else {
       _refreshController.loadComplete();
     }
+  }
+
+  Future<List<String>> _getFollowedUserIds() async {
+            final user = Provider.of<User?>(context, listen: false);
+
+    DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid) // Replace with your current user ID
+        .get();
+
+    if (userSnapshot.exists) {
+      Map<String, dynamic>? data = userSnapshot.data() as Map<String, dynamic>?;
+      List<String> followedUserIds = List<String>.from(data?['following'] ?? []);
+      return followedUserIds;
+    }
+    return [];
   }
 
   void _onRefresh() async {
@@ -95,9 +133,8 @@ class _RoomsListState extends State<RoomsList> {
   void _onLoading() async {
     if (_hasMore) {
       await _fetchRooms();
-    } else {
-      _refreshController.loadComplete();
     }
+    _refreshController.loadComplete();
   }
 
   @override
@@ -106,7 +143,7 @@ class _RoomsListState extends State<RoomsList> {
       enablePullDown: true,
       enablePullUp: true,
       controller: _refreshController,
-    header: CustomHeader(
+      header: CustomHeader(
         builder: (BuildContext context, RefreshStatus? mode) {
           Widget body;
           if (mode == RefreshStatus.refreshing) {
@@ -133,17 +170,18 @@ class _RoomsListState extends State<RoomsList> {
             child: Center(child: body),
           );
         },
-      ),     
-      
-      
-       onRefresh: _onRefresh,
+      ),
+      onRefresh: _onRefresh,
       onLoading: _onLoading,
       child: ListView.builder(
-        itemCount: _roomsList.length,
+        itemCount: _RoomHomeList.length,
         itemBuilder: (context, index) {
-          final room = _roomsList[index];
+          final room = _RoomHomeList[index];
           if (room == null) {
-            return ListTile(title: Text('Room not found'));
+            return ListTile(title: Text('add friends'));
+          }
+               if (_RoomHomeList.isEmpty) {
+            return Center(child: CupertinoActivityIndicator());
           }
           return RoomsShape(
             roomId: room.roomId,

@@ -10,7 +10,7 @@ String getTypeName(RoomType type , BuildContext context) {
     case RoomType.public:
       return TranslationConstants.general.t(context);
     case RoomType.games:
-      return TranslationConstants.general.t(context);
+      return TranslationConstants.games.t(context);
     case RoomType.politics:
       return TranslationConstants.politics.t(context);
     case RoomType.history:

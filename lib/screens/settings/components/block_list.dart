@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notes/services/blockservice.dart';
 import 'package:notes/services/follow_service.dart';
+import 'package:notes/ui/avatar_widget.dart';
 import 'package:notes/utils/constants/color.dart';
 import 'package:provider/provider.dart';
 
@@ -51,11 +52,9 @@ class BlockList extends StatelessWidget {
                   Stack(
                     alignment: AlignmentDirectional.bottomStart,
                     children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage(
-                            'assets/avatar/${block.photoURL!}.jpeg'),
-                        radius: 40.0,
-                      ),
+                                              AvatarWidget(radius:40, photoURL:block.photoURL.toString()),
+
+
                       Positioned(
                           top: 40,
                           right: -10,

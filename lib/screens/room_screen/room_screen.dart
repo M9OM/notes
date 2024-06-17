@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notes/models/members_model.dart';
 import 'package:notes/models/rooms_model.dart';
 import 'package:notes/route/route_screen.dart';
 import 'package:notes/screens/home/home_screen.dart';
@@ -104,11 +105,13 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                     } else {
                       final room = snapshot.data!;
 
+
+
                       // Assign the oldest member as admin if not already set
                       ChatService().assignAdminToOldestMember(room);
 
                       final currentUserUid = user?.uid;
-                      final isAdmin = room.membersId.any((member) =>
+                      bool isIamAdmin = room.membersId.any((member) =>
                           member.isAdmin && member.uid == currentUserUid);
 
                       return AppBar(
@@ -150,7 +153,6 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                                   showRoomMembersDialog(
                                     context,
                                     MembersList(
-                                      isAdmin: isAdmin,
                                       membersData: room.membersData ?? [],
                                     ),
                                   );
@@ -162,7 +164,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                               ),
                             ],
                           ),
-                          if (isAdmin)
+                          if (isIamAdmin)
                             IconButton(
                               onPressed: () async {
                                 final selectedVideo = await Navigator.push(
@@ -196,7 +198,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                     Mybackground(
                       mainAxisAlignment: MainAxisAlignment.center,
                       screens: [
-                        VideoStream(roomId: widget.roomId),
+                        VideoStream(roomId: widget.roomId, ),
                         Expanded(
                           child: MessageList(
                               roomId: widget.roomId, userId: user!.uid),

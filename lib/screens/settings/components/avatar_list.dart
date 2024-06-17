@@ -1,13 +1,33 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:notes/route/route_screen.dart';
+import 'package:notes/screens/settings/components/gif_picker_avatar.dart';
 import 'package:notes/services/auth_service.dart';
+import 'package:notes/services/upload_scrvice.dart';
+import 'package:notes/ui/avatar_widget.dart';
 import 'package:notes/utils/constants/screenSize.dart';
 import 'package:provider/provider.dart';
 
 import '../../../controllers/profile_controller.dart';
 
-class AvatarList extends StatelessWidget {
+class AvatarList extends StatefulWidget {
   const AvatarList({Key? key});
+
+  @override
+  State<AvatarList> createState() => _AvatarListState();
+}
+
+class _AvatarListState extends State<AvatarList> {
+  String? imageUrl;
+
+  void _uploadImage() async {
+    final user = await AuthService().getCurrentUser();
+    UploadService uploadService = UploadService();
+    // ignore: use_build_context_synchronously
+    String? url = await uploadService.pickAndUploadImage(context);
+    await AuthService().updateImageUrl(user!.uid, url!);
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +53,21 @@ class AvatarList extends StatelessWidget {
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () async {
-                await AuthService().updateImageUrl(user!.uid, index.toString());
+                if (index == 0) {
+                  _uploadImage();
+Navigator.pop(context);
+                } else {
+    await AuthService().updateImageUrl(user!.uid, index.toString());
 
-                Provider.of<ProfileController>(context, listen: false)
-                    .setImageAvatar(index.toString());
+
+
+                }
               },
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  backgroundImage: AssetImage('assets/avatar/$index.jpeg'),
-                ),
-              ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: AvatarWidget(
+                      radius: 90,
+                      photoURL: index == 0 ? 'add_pic' : index.toString())),
             );
           },
         ),

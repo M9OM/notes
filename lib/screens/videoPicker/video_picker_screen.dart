@@ -114,7 +114,9 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
                 itemBuilder: (context, index) {
                   var video = _searchResults[index];
                   return InkWell(
-                    onTap: () {
+                    onTap: () async{
+                    await  ChatService().setVideo(widget.roomId,'' );
+
                       ChatService().setVideo(widget.roomId,video.thumbnails.videoId );
                       Navigator.pop(context, video);
                     },

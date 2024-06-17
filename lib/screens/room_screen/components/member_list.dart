@@ -2,15 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/models/user_model.dart';
 import 'package:notes/services/follow_service.dart';
+import 'package:notes/ui/avatar_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../../services/blockservice.dart';
 
 class MembersList extends StatefulWidget {
   final List<UserModel?> membersData;
-  final bool isAdmin;
 
-  MembersList({Key? key, required this.membersData, required this.isAdmin})
+  MembersList({Key? key, required this.membersData})
       : super(key: key);
 
   @override
@@ -41,6 +41,8 @@ class _MembersListState extends State<MembersList> {
         }
 
         return ListTile(
+          subtitle:                   Text(widget.membersData[0] == widget.membersData[index]? "Admin":''),
+
           trailing: currentUser != null && currentUser!.uid != member!.uid
               ? Row(
                   mainAxisSize: MainAxisSize.min,
@@ -123,15 +125,13 @@ class _MembersListState extends State<MembersList> {
                   ],
                 )
               : null, // If user is null or user's UID matches member's UID, hide the buttons
-          leading: CircleAvatar(
-            backgroundImage:
-                member!.photoURL != null && member.photoURL!.isNotEmpty
-
-                    //assets/avatar
-                    ? AssetImage('assets/avatar/${member.photoURL!}.jpeg')
-                    : AssetImage('assets/avatar/${member.photoURL!}.jpeg')
-                        as ImageProvider,
-          ),
+          leading: 
+          
+          
+          AvatarWidget(radius: 20, photoURL: member!.photoURL!)
+          
+          
+,
           title: Text(
             username,
             style: TextStyle(fontSize: 15),

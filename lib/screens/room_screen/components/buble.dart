@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:notes/controllers/lang_controller.dart';
+import 'package:notes/ui/avatar_widget.dart';
 import '/models/message_model.dart';
 import '../../../services/room_service.dart';
 import 'package:provider/provider.dart';
@@ -84,9 +86,10 @@ class _BubleState extends State<Buble> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final user = Provider.of<User?>(context);
+    final lang = Provider.of<LanguageController?>(context);
 
     DateTime dateTime = widget.time.toDate();
-    DateFormat dateFormat = DateFormat("hh:mm a", "ar");
+    DateFormat dateFormat = DateFormat("hh:mm a", "${lang!.currentLanguage}");
 
     // Count occurrences of each emoji
     Map<String, int> emojiCount = {};
@@ -109,11 +112,8 @@ class _BubleState extends State<Buble> with SingleTickerProviderStateMixin {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
-                  child: CircleAvatar(
-                    backgroundImage:
-                        AssetImage('assets/avatar/${widget.avatar}.jpeg'),
-                    radius: 15,
-                  ),
+                  child: AvatarWidget(
+                      radius: 15, photoURL: widget.avatar.toString()),
                 ),
                 Container(
                   child: Row(

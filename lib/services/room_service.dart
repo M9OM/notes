@@ -268,8 +268,12 @@ Stream<List<Rooms?>> getAllRooms() {
     await _db.collection('rooms').doc(roomId).set(room.toFirestore());
   }
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> getRoomStream(String roomId) {
-    return _db.collection('rooms').doc(roomId).snapshots();
+  Stream<Rooms> getRoomStream(String roomId) {
+    return _db
+        .collection('rooms')
+        .doc(roomId)
+        .snapshots()
+        .map((snapshot) => Rooms.fromFirestore(snapshot.data() ?? {}));
   }
 
   Future<Rooms?> getUserDataRooms(String roomId) async {
@@ -484,11 +488,13 @@ class RoomService {
   
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<List<DocumentSnapshot>> getRoomsHome({DocumentSnapshot? startAfter, int limit = 5, required List<String> followedUserIds}) async {
+  Future<List<DocumentSnapshot>> getRoomsHome({
+    DocumentSnapshot? startAfter,
+    int limit = 5,
+  }) async {
     try {
       Query query = _firestore
           .collection('rooms')
-          .where('membersId.uid', whereIn: followedUserIds)
           .orderBy('timestamp', descending: true)
           .limit(limit);
 

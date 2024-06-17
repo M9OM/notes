@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:notes/controllers/user_stream_controller.dart';
 import 'package:notes/models/user_model.dart';
 import 'package:notes/screens/settings/components/avatar_list.dart';
+import 'package:notes/ui/avatar_widget.dart';
 import 'package:notes/utils/constants/color.dart';
 import 'package:notes/utils/constants/screenSize.dart';
 import 'package:provider/provider.dart';
@@ -50,13 +51,21 @@ class UserData extends StatelessWidget {
                     return Stack(
                       alignment: AlignmentDirectional.bottomStart,
                       children: [
-                        CircleAvatar(
-                          radius: 60,
-                          backgroundImage: AssetImage(avatarController
-                                  .pathImageAvatar.isEmpty
-                              ? 'assets/avatar/${userData.photoURL}.jpeg'
-                              : 'assets/avatar/${avatarController.pathImageAvatar}.jpeg'),
-                        ),
+
+
+                        AvatarWidget(radius:60, photoURL:userData.photoURL.toString()),
+// CircleAvatar(
+//   radius: 60,
+//   backgroundImage: userData.photoURL!.contains('http')
+//     ? NetworkImage(userData.photoURL!)
+//     : AssetImage(
+//         avatarController.pathImageAvatar.isEmpty
+//           ? 'assets/avatar/${userData.photoURL}.jpeg'
+//           : 'assets/avatar/${avatarController.pathImageAvatar}.jpeg',
+//       ) as ImageProvider<Object>?,
+// ),
+
+
                         InkWell(
                           onTap: () {
                             showModalBottomSheet(

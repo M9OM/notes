@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notes/services/follow_service.dart';
+import 'package:notes/ui/avatar_widget.dart';
 import 'package:notes/utils/constants/color.dart';
 import 'package:provider/provider.dart';
 
@@ -50,11 +51,9 @@ class FollowersWidget extends StatelessWidget {
                   Stack(
                     alignment: AlignmentDirectional.bottomStart,
                     children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage(
-                            'assets/avatar/${follower.photoURL!}.jpeg'),
-                        radius: 40.0,
-                      ),
+    AvatarWidget(radius:40, photoURL:follower.photoURL.toString()),
+
+
                       Positioned(
                           top: 50,
                           right: -10,

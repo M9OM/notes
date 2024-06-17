@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:notes/controllers/page_controller.dart';
 import 'package:notes/controllers/room_controller.dart';
 import 'package:notes/controllers/room_presence_provider.dart';
+import 'package:notes/services/supabase_screvice.dart';
 import 'package:notes/utils/constants/assets_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
@@ -43,14 +44,18 @@ Future<void> loadEnglishValue() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  await SupabaseConfig.init();
   LanguageController languageController = LanguageController();
   await languageController.loadLanguage();
 
   await loadEnglishValue();
   await loadArabicValue();
-   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    runApp(MyApp(languageController: languageController)); // Pass the language controller to MyApp
+    runApp(MyApp(
+        languageController:
+            languageController)); // Pass the language controller to MyApp
   });
 
   // Initialize OneSignal for push notifications
@@ -60,7 +65,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-    final LanguageController languageController;
+  final LanguageController languageController;
 
   MyApp({required this.languageController});
 
@@ -93,15 +98,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<RoomController>(
           create: (_) => RoomController(),
         ),
-
-     ChangeNotifierProvider<RoomPresenceProvider>(
+        ChangeNotifierProvider<RoomPresenceProvider>(
           create: (_) => RoomPresenceProvider(),
         ),
-
-
-
         ChangeNotifierProvider<LanguageController>.value(
-          value: languageController, // Provide the existing instance of LanguageController
+          value:
+              languageController, // Provide the existing instance of LanguageController
         ),
       ],
       child: Consumer<LanguageController>(

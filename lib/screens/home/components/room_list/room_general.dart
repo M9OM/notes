@@ -8,18 +8,20 @@ import 'package:notes/screens/home/components/rooms_shape.dart';
 import 'package:notes/services/room_service.dart';
 import 'package:notes/models/rooms_model.dart';
 
-class RoomsList extends StatefulWidget {
-  const RoomsList({super.key});
+class RoomsGeneralList extends StatefulWidget {
+  const RoomsGeneralList({super.key});
 
   @override
-  _RoomsListState createState() => _RoomsListState();
+  _RoomsGeneralListState createState() => _RoomsGeneralListState();
 }
 
-class _RoomsListState extends State<RoomsList> {
-  
+class _RoomsGeneralListState extends State<RoomsGeneralList> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-  List<Rooms?> _roomsList = [];
+  List<Rooms?> _roomsGeneralList = [];
   DocumentSnapshot? _lastDocument;
   bool _hasMore = true;
 
@@ -72,9 +74,9 @@ class _RoomsListState extends State<RoomsList> {
 
     setState(() {
       if (isRefresh) {
-        _roomsList = newRooms;
+        _roomsGeneralList = newRooms;
       } else {
-        _roomsList.addAll(newRooms);
+        _roomsGeneralList.addAll(newRooms);
       }
     });
 
@@ -139,12 +141,14 @@ class _RoomsListState extends State<RoomsList> {
        onRefresh: _onRefresh,
       onLoading: _onLoading,
       child: ListView.builder(
-        itemCount: _roomsList.length,
+        itemCount: _roomsGeneralList.length,
         itemBuilder: (context, index) {
-          final room = _roomsList[index];
+          final room = _roomsGeneralList[index];
           if (room == null) {
             return ListTile(title: Text('Room not found'));
-          }
+          } 
+
+
           return RoomsShape(
             roomId: room.roomId,
             imageUrl: room.avtarRoomUrl,
@@ -157,3 +161,4 @@ class _RoomsListState extends State<RoomsList> {
     );
   }
 }
+

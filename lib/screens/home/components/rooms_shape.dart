@@ -7,6 +7,7 @@ import 'package:notes/models/user_model.dart';
 import 'package:notes/route/route_screen.dart';
 import 'package:notes/screens/room_screen/room_screen.dart';
 import 'package:notes/services/room_service.dart';
+import 'package:notes/ui/avatar_widget.dart';
 import 'package:notes/utils/constants/color.dart';
 import 'package:notes/utils/constants/lang/str_extntion.dart';
 import 'package:notes/utils/constants/lang/translate_constat.dart';
@@ -50,9 +51,18 @@ class RoomsShape extends StatelessWidget {
               Row(
                 children: [
                   ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                          width: 60, 'assets/avatar/$imageUrl.jpeg')),
+                      borderRadius: BorderRadius.circular(15),
+                      child: imageUrl.contains('http')
+                          ? Image.network(
+                              fit: BoxFit.cover,
+                              width: 65,
+                              height: 65,
+                              imageUrl)
+                          : Image.asset(
+                              fit: BoxFit.fill,
+                              width: 65,
+                              height: 65,
+                              'assets/avatar/$imageUrl.jpeg')),
                   const SizedBox(
                     width: 10,
                   ),
@@ -81,29 +91,26 @@ class RoomsShape extends StatelessWidget {
                     membersData!.length > 3 ? 3 : membersData!.length,
                     (index) => Padding(
                       padding: const EdgeInsets.only(right: 5.0),
-                      child: CircleAvatar(
-                        radius: 15,
-                        backgroundImage: AssetImage(
-                            'assets/avatar/${membersData![index].photoURL!}.jpeg'),
-                      ),
+                      child: AvatarWidget(
+                          radius: 15, photoURL: membersData![index].photoURL!),
                     ),
                   ),
                   if (membersData!.length > 3)
-                    Text('  ${TranslationConstants.and.t(context)} ${membersData!.length - 3} ${TranslationConstants.others.t(context)}'),
+                    Text(
+                        '  ${TranslationConstants.and.t(context)} ${membersData!.length - 3} ${TranslationConstants.others.t(context)}'),
                 ],
               ),
               const SizedBox(
                 height: 10,
               ),
               GestureDetector(
-                onTap: () async{
+                onTap: () async {
                   loadingController!.loading(true);
-                await  ChatService().joinRoom(roomId, user!.uid);
+                  await ChatService().joinRoom(roomId, user!.uid);
                   navigateScreenWithoutGoBack(
                       context, RoomScreen(roomId: roomId));
 
-                   loadingController.loading(false);
-
+                  loadingController.loading(false);
                 },
                 child: Center(
                     child: Container(
@@ -113,8 +120,8 @@ class RoomsShape extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20)),
                         padding: const EdgeInsets.all(10),
                         width: ScreenSizeExtension(context).screenWidth * 0.95,
-                        child:  Text(
-                         TranslationConstants.join.t(context),
+                        child: Text(
+                          TranslationConstants.join.t(context),
                           style: TextStyle(color: Colors.white),
                         ))),
               )

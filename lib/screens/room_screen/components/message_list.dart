@@ -30,14 +30,15 @@ class _MessageListState extends State<MessageList> {
     super.initState();
     _listScrollController = ScrollController();
   }
-final timeNow = Timestamp.now();
+
+  final timeNow = Timestamp.now();
 
   @override
   Widget build(BuildContext context) {
     final chatService = Provider.of<ChatService>(context);
     final user = Provider.of<User?>(context);
     return StreamBuilder<List<Map<String, dynamic>>>(
-      stream: chatService.getMessagesWithUserData(widget.roomId,timeNow),
+      stream: chatService.getMessagesWithUserData(widget.roomId, timeNow),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
@@ -75,7 +76,7 @@ final timeNow = Timestamp.now();
                 isMe: messageData.userId == user!.uid,
                 time: messageData.timestamp,
                 likes: messageData.likes,
-                username:userData.username!,
+                username: userData.username!,
                 avatar: userData.photoURL!,
               ),
             );

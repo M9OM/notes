@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:notes/models/members_model.dart';
+import 'package:notes/models/rooms_model.dart';
 import 'package:provider/provider.dart';
 import 'package:notes/utils/constants/color.dart';
 import 'package:notes/services/room_service.dart';
@@ -22,7 +25,7 @@ class VideoStream extends StatefulWidget {
 }
 
 class _VideoStreamState extends State<VideoStream> {
-  late Stream<DocumentSnapshot<Map<String, dynamic>>> _roomStream;
+  late Stream<Rooms> _roomStream;
 
   @override
   void initState() {
@@ -32,23 +35,18 @@ class _VideoStreamState extends State<VideoStream> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+    final user = Provider.of<User?>(context);
+
+    return StreamBuilder<Rooms>(
       stream: _roomStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Center(child: Text('No data available'));
-        }
-
-        var roomData = snapshot.data!.data();
-        var videoId = roomData?['videoId'] ?? '';
+        var roomData = snapshot.data!;
+        var videoId = roomData.videoId ?? '';
+        List<Member> member_list = roomData.membersId ?? [];
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -58,17 +56,23 @@ class _VideoStreamState extends State<VideoStream> {
             if (videoId.isNotEmpty)
               Stack(
                 children: [
-                  VideoPlayerScreen(videoId: videoId),
+                  VideoPlayerScreen(videoId: videoId,roomId:widget.roomId, isAdmin:member_list[0].uid == user!.uid
+                            ),
                   Positioned(
                     top: 0,
                     right: 0,
                     child: IconButton(
                       onPressed: () {
-                        ChatService().setVideo(widget.roomId, '');
+                        member_list[0].uid == user!.uid
+                            ? ChatService().setVideo(widget.roomId, '')
+                            : null;
                       },
-                      icon: const Icon(Icons.close, color: Colors.white),
+                      icon: Icon(Icons.close,
+                          color: member_list[0].uid == user!.uid
+                              ? Colors.white
+                              : Colors.grey),
                     ),
-                  ),
+                  )
                 ],
               )
             else

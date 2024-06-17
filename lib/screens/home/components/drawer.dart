@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes/models/user_model.dart';
 import 'package:notes/screens/settings/settings_screen.dart';
 import 'package:notes/services/auth_service.dart';
+import 'package:notes/ui/avatar_widget.dart';
 import 'package:notes/ui/background.dart';
 import 'package:notes/utils/constants/assets_constants.dart';
 import 'package:notes/utils/constants/lang/str_extntion.dart';
@@ -61,11 +62,8 @@ class MyDrawer extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                CircleAvatar(
-                                  radius: 35,
-                                  backgroundImage: AssetImage(
-                                      'assets/avatar/${userData.photoURL!}.jpeg'),
-                                ),
+                                AvatarWidget(radius: 35, photoURL: userData.photoURL!)
+,
                                 const SizedBox(
                                   height: 10,
                                 )

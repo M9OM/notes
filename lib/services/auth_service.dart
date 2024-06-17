@@ -122,8 +122,9 @@ class AuthService {
 
   Future<void> signOut() async {
     try {
-      await _auth.signOut();
       removePlayerId(_auth.currentUser!.uid);
+
+      await _auth.signOut();
     } catch (e) {
       print(e.toString());
     }
