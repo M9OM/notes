@@ -33,6 +33,10 @@ class AssetsConstants {
     static const String blockSvg = "$path/users-slash.svg";
 
   //users.svg
+
+
+    static const String adsSvg = "$path/ad.svg";
+
   static const String shareSvg = "$path/share-square.svg";
   static const String heartSharpSvg = "$path/h.svg";
     static const String heartOutlinepSvg = "$path/heart1.svg";

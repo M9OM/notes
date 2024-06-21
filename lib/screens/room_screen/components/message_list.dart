@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../models/user_model.dart';
@@ -22,7 +23,6 @@ class MessageList extends StatefulWidget {
 
 class _MessageListState extends State<MessageList> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
-
   late ScrollController _listScrollController;
 
   @override
@@ -35,23 +35,27 @@ class _MessageListState extends State<MessageList> {
 
   @override
   Widget build(BuildContext context) {
-    final chatService = Provider.of<ChatService>(context);
-    final user = Provider.of<User?>(context);
+    final chatService = Provider.of<ChatService>(context, listen: false);
+    final user = Provider.of<User?>(context, listen: false);
+
+    if (user == null) {
+      return const Center(child: CupertinoActivityIndicator(radius: 14,));
+    }
+
     return StreamBuilder<List<Map<String, dynamic>>>(
       stream: chatService.getMessagesWithUserData(widget.roomId, timeNow),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CupertinoActivityIndicator(radius: 14));
         }
-        final messagesWithUserData = snapshot.data!;
 
+        final messagesWithUserData = snapshot.data!;
         if (_listKey.currentState != null &&
             _listKey.currentState!.widget.initialItemCount !=
                 messagesWithUserData.length) {
           final newIndex = messagesWithUserData.length -
               _listKey.currentState!.widget.initialItemCount;
           HapticFeedback.mediumImpact();
-
           _listKey.currentState!.insertItem(newIndex - 1);
         }
 
@@ -62,8 +66,12 @@ class _MessageListState extends State<MessageList> {
           initialItemCount: messagesWithUserData.length,
           itemBuilder: (context, index, animation) {
             final messageData =
-                messagesWithUserData[index]['message'] as Message;
-            final userData = messagesWithUserData[index]['user'] as UserModel;
+                messagesWithUserData[index]['message'] as Message?;
+            final userData = messagesWithUserData[index]['user'] as UserModel?;
+
+            if (messageData == null || userData == null) {
+              return const SizedBox.shrink();
+            }
 
             return SizeTransition(
               sizeFactor: animation,
@@ -73,11 +81,11 @@ class _MessageListState extends State<MessageList> {
                 roomId: widget.roomId,
                 id: messageData.id.toString(),
                 text: messageData.text,
-                isMe: messageData.userId == user!.uid,
+                isMe: messageData.userId == user.uid,
                 time: messageData.timestamp,
                 likes: messageData.likes,
-                username: userData.username!,
-                avatar: userData.photoURL!,
+                username: userData.username ?? 'Unknown',
+                avatar: userData.photoURL ?? '',
               ),
             );
           },

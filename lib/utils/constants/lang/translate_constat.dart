@@ -2,13 +2,20 @@
 
 class TranslationConstants {
   TranslationConstants._();
-    static const String and = 'and';
+    static const String the_cube_has_been_closed = 'the_cube_has_been_closed';
+    static const String end_or_leave = 'end_or_leave';
+    static const String leave = 'leave';
+    static const String end = 'end';
+    static const String ads = 'ads';
+   static const String block = 'block';
+  static const String follow = 'follow';
+  static const String and = 'and';
   static const String do_u_want_report_this_room = 'do_u_want_report_this_room';
-  static const String block = 'block';
   static const String block_subtitle = 'block_subtitle';
   static const String for_you = 'for_you';
   static const String following = 'following';
-
+  static const String private_cube = 'private_cube';
+  static const String enter_password = 'enter_password';
   static const String yes = 'yes';
   static const String no = 'no';
   static const String cube = 'cube';

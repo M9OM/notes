@@ -9,21 +9,20 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:notes/utils/constants/assets_constants.dart';
-import 'package:notes/utils/constants/color.dart';
 import 'package:notes/services/room_service.dart';
 
 import '../../home/home_screen.dart';
 
-class ReactionBouttons extends StatefulWidget {
+class ReactionButtons extends StatefulWidget {
   final String roomId;
 
-  ReactionBouttons({Key? key, required this.roomId}) : super(key: key);
+  ReactionButtons({Key? key, required this.roomId}) : super(key: key);
 
   @override
-  _ReactionBouttonsState createState() => _ReactionBouttonsState();
+  _ReactionButtonsState createState() => _ReactionButtonsState();
 }
 
-class _ReactionBouttonsState extends State<ReactionBouttons>
+class _ReactionButtonsState extends State<ReactionButtons>
     with SingleTickerProviderStateMixin {
   late ChatService chatService;
   late AnimationController _animationController;
@@ -41,10 +40,8 @@ class _ReactionBouttonsState extends State<ReactionBouttons>
 
     _scaleAnimation = TweenSequence(
       [
-        TweenSequenceItem(
-            tween: Tween<double>(begin: 1.0, end: 1.3), weight: 40),
-        TweenSequenceItem(
-            tween: Tween<double>(begin: 1.3, end: 1.0), weight: 50),
+        TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.3), weight: 40),
+        TweenSequenceItem(tween: Tween<double>(begin: 1.3, end: 1.0), weight: 50),
       ],
     ).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
@@ -65,12 +62,16 @@ class _ReactionBouttonsState extends State<ReactionBouttons>
     } else {
       await chatService.addLikeRoom(roomId, userId);
     }
-    // تشغيل الانميشن عند الضغط على الإعجاب
   }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
+
+    if (user == null) {
+      // If the user is not logged in, show an empty container
+      return Container();
+    }
 
     return Align(
       alignment: Alignment.centerRight,
@@ -86,9 +87,14 @@ class _ReactionBouttonsState extends State<ReactionBouttons>
               return CircularProgressIndicator();
             }
 
+            if (!snapshot.data!.exists) {
+              // Handle the case when the document does not exist
+              return Container();
+            }
+
             var roomData = snapshot.data!;
             var likes = List<String>.from(roomData['likes'] ?? []);
-            var isLiked = likes.contains(user!.uid);
+            var isLiked = likes.contains(user.uid);
             var likeCount = likes.length;
 
             return Column(
@@ -97,7 +103,6 @@ class _ReactionBouttonsState extends State<ReactionBouttons>
                 GestureDetector(
                   onTap: () {
                     HapticFeedback.mediumImpact();
-
                     _handleLike(widget.roomId, user.uid, isLiked);
                   },
                   child: Column(
@@ -108,7 +113,7 @@ class _ReactionBouttonsState extends State<ReactionBouttons>
                           isLiked
                               ? AssetsConstants.heartSharpSvg
                               : AssetsConstants.heartOutlinepSvg,
-                          width: 35, // تكبير الايقونة عند الضغط
+                          width: 35,
                           color: isLiked
                               ? Colors.red.withOpacity(0.7)
                               : Colors.grey[300],
@@ -125,9 +130,7 @@ class _ReactionBouttonsState extends State<ReactionBouttons>
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 25,
-                ),
+                SizedBox(height: 25),
                 GestureDetector(
                   onTap: () {
                     showMsgDialog(
@@ -146,7 +149,7 @@ class _ReactionBouttonsState extends State<ReactionBouttons>
                   },
                   child: SvgPicture.asset(
                     'assets/icon/info.svg',
-                    width: 33, // تكبير الايقونة عند الضغط
+                    width: 33,
                     color: Colors.white.withOpacity(0.6),
                   ),
                 ),

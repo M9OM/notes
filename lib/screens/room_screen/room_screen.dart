@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:notes/models/members_model.dart';
 import 'package:notes/models/rooms_model.dart';
 import 'package:notes/route/route_screen.dart';
 import 'package:notes/screens/home/home_screen.dart';
@@ -36,36 +37,43 @@ class RoomScreen extends StatefulWidget {
   State<RoomScreen> createState() => _RoomScreenState();
 }
 
-class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
+class _RoomScreenState extends State<RoomScreen>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   late Stream<Rooms?> getRoomData;
+  bool _keyboardVisible = false;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     getRoomData = ChatService().getRoomById(widget.roomId);
     WidgetsBinding.instance.addObserver(this);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+
+    _animation = Tween<double>(begin: kToolbarHeight, end: 0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.ease,
+      ),
+    );
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _animationController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.detached) {
-      final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
-      if (currentUserUid != null) {
-        await ChatService().leaveRoom(widget.roomId, currentUserUid);
-      }
-    }
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
+    _keyboardVisible = MediaQuery.of(context).viewInsets.bottom != 0;
     final user = Provider.of<User?>(context);
     final loadingController = Provider.of<LoadingController?>(context);
 
@@ -83,7 +91,9 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
               key: _scaffoldKey,
               extendBodyBehindAppBar: true,
               appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(kToolbarHeight),
+                preferredSize: _keyboardVisible
+                    ? Size.fromHeight(0)
+                    : Size.fromHeight(kToolbarHeight),
                 child: StreamBuilder<Rooms?>(
                   stream: getRoomData,
                   builder: (context, snapshot) {
@@ -98,14 +108,23 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                         title: Text(snapshot.error.toString()),
                       );
                     } else if (!snapshot.hasData || snapshot.data == null) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        showMsgDialogoneBun(
+                          context: context,
+                          onTap: () {
+                            navigateScreenWithoutGoBack(
+                                context, const HomeScreen());
+                          },
+                          title: TranslationConstants.the_cube_has_been_closed.t(context),
+                        );
+                      });
+
                       return AppBar(
                         backgroundColor: Colors.transparent,
-                        title: const Text('Room not found'),
+                        title: const Text(''),
                       );
                     } else {
                       final room = snapshot.data!;
-
-
 
                       // Assign the oldest member as admin if not already set
                       ChatService().assignAdminToOldestMember(room);
@@ -119,20 +138,49 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                         backgroundColor: Colors.transparent,
                         leading: IconButton(
                           onPressed: () {
-                            showMsgDialog(
-                              context: context,
-                              title: TranslationConstants.do_you_want_to_exit
-                                  .t(context),
-                              onTap: () async {
-                                loadingController!.loading(true);
-                                await ChatService().leaveRoom(
-                                    widget.roomId, currentUserUid.toString());
-                                loadingController.loading(false);
+                            isIamAdmin
+                                ? showMsgDialogEndOrLeave(
+                                    context: context,
+                                    title: TranslationConstants.end_or_leave.t(context),
+                                    end: () async {
+                                      loadingController.loading(true);
+                                      await ChatService()
+                                          .deleteRoom(widget.roomId);
+                                      loadingController.loading(false);
 
-                                navigateScreenWithoutGoBack(
-                                    context, const HomeScreen());
-                              },
-                            );
+                                      navigateScreenWithoutGoBack(
+                                          // ignore: use_build_context_synchronously
+                                          context,
+                                          const HomeScreen());
+                                    },
+                                    leave: () async {
+                                      loadingController.loading(true);
+                                      await ChatService().leaveRoom(
+                                          widget.roomId, currentUserUid!);
+                                      loadingController.loading(false);
+
+                                      navigateScreenWithoutGoBack(
+                                          // ignore: use_build_context_synchronously
+                                          context,
+                                          const HomeScreen());
+                                    },
+                                  )
+                                : showMsgDialog(
+                                    context: context,
+                                    title: TranslationConstants
+                                        .do_you_want_to_exit
+                                        .t(context),
+                                    onTap: () async {
+                                      loadingController.loading(true);
+                                      await ChatService().leaveRoom(
+                                          widget.roomId,
+                                          currentUserUid.toString());
+                                      loadingController.loading(false);
+
+                                      navigateScreenWithoutGoBack(
+                                          context, const HomeScreen());
+                                    },
+                                  );
                           },
                           icon: const Icon(Icons.close),
                         ),
@@ -192,13 +240,23 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
               body: GestureDetector(
                 onTap: () {
                   FocusScope.of(context).unfocus();
+                  setState(() {
+                    FocusScope.of(context).hasFocus
+                        ? _keyboardVisible = false
+                        : false;
+                  });
                 },
                 child: Stack(
                   children: [
                     Mybackground(
                       mainAxisAlignment: MainAxisAlignment.center,
                       screens: [
-                        VideoStream(roomId: widget.roomId, ),
+                        _keyboardVisible
+                            ? SizedBox(height: 0)
+                            : SizedBox(height: 110),
+                        VideoStream(
+                          roomId: widget.roomId,
+                        ),
                         Expanded(
                           child: MessageList(
                               roomId: widget.roomId, userId: user!.uid),
@@ -209,7 +267,7 @@ class _RoomScreenState extends State<RoomScreen> with WidgetsBindingObserver {
                     Positioned(
                       right: 10,
                       bottom: 120,
-                      child: ReactionBouttons(roomId: widget.roomId),
+                      child: ReactionButtons(roomId: widget.roomId),
                     ),
                   ],
                 ),

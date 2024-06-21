@@ -242,7 +242,7 @@ Stream<List<Rooms?>> getAllRooms() {
 
   Future<void> createRoom(
       String roomName, String roomId, String adminId, String avtarRoomUrl,
-      {required String roomType}) async {
+      {required String roomType, required bool isPrivate, String? password}) async {
     List<UserModel> failedFollowers =
         await FollowService().getFollowersData(adminId);
     List<String> playerId = [];
@@ -264,6 +264,8 @@ Stream<List<Rooms?>> getAllRooms() {
         avtarRoomUrl: avtarRoomUrl,
         videoId: '',
         likes: [],
+        isPrivate:isPrivate,
+        password:password,
       );
     await _db.collection('rooms').doc(roomId).set(room.toFirestore());
   }
@@ -373,7 +375,7 @@ Future<void> joinRoom(String roomId, String userId) async {
       }
 
       // إرسال رسالة الانضمام
-      sendMessage(roomId, 'قام بالانضمام ${currentUserData!.username}', userId);
+      sendMessage(roomId, 'قام بالانضمام', userId);
 
       // تحديث قائمة الأعضاء في الغرفة
       await _db.collection('rooms').doc(roomId).update({
@@ -393,6 +395,16 @@ Future<void> joinRoom(String roomId, String userId) async {
     }
   } else {
     print('Error: Failed to get room admin data.');
+  }
+}
+Future<void> deleteRoom(String roomId) async {
+
+  try {
+    await _db.collection('rooms').doc(roomId).delete();
+    print('Room successfully deleted.');
+  } catch (e) {
+    print('Error deleting room: $e');
+    // You might also want to rethrow the error or handle it in another way
   }
 }
 Future<void> leaveRoom(String roomId, String memberId) async {

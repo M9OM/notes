@@ -71,6 +71,8 @@ dependencies:
   image_picker: ^1.1.2
   video_player: ^2.8.7
   supabase_flutter: ^2.5.5
+  lottie: ^3.1.2
+  cached_network_image: ^3.3.1
 
 
 dev_dependencies:
@@ -100,6 +102,8 @@ flutter:
     - assets/icon/
     - assets/avatar/
     - assets/languages/
+    - assets/json/
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -117,6 +121,7 @@ flutter:
     - family: arabic
       fonts:
         - asset: assets/fonts/IBMPlexSansArabic-Medium.ttf
+          weight: 200
         - asset: assets/fonts/IBMPlexSansArabic-Bold.ttf
           weight: 700
 

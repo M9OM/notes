@@ -46,6 +46,12 @@
     "do_u_want_report_this_room": "هل ترغب في الإبلاغ عن هذه الغرفة؟",
     "for_you": "لك",
     "following": "المتابعة",
+    "end_or_leave": "انهاء أو مغادرة",
+    "leave": "مغادرة",
+    "end": "انهاء",
+    "ads": "إعلانات",
+    "the_cube_has_been_closed": "تم اغلاق المكعب",
+    "follow": "متابعة",
 
     "login": "تسجيل الدخول",
     "write": "اكتب...",
@@ -64,8 +70,9 @@
     "arabic": "العربية",
     "english": "الإنجليزية",
     "block": "حظر",
-    "block_subtitle": "قم بإدارة قائمة الحظر"
-
+    "block_subtitle": "قم بإدارة قائمة الحظر",
+    "private_cube": "مكعب خاص",
+    "enter_password": "أدخل كلمة المرور"
 
 
 }

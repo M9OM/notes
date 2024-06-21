@@ -1,28 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:notes/utils/constants/color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AvatarWidget extends StatelessWidget {
-  AvatarWidget({super.key, required this.radius, required this.photoURL});
-  final int radius;
+  AvatarWidget({Key? key, required this.radius, required this.photoURL}) : super(key: key);
+  
+  final double radius; // Use double for radius to align with CircleAvatar's requirements
   final String photoURL;
+  
   @override
   Widget build(BuildContext context) {
-    return photoURL == 'add_pic'
-        ? CircleAvatar(
-          backgroundColor: GetThemeData(context).theme.highlightColor,
-            radius: radius.toDouble(),
-            child: Icon(
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: photoURL == 'add_pic' ? Theme.of(context).highlightColor : null,
+      child: photoURL == 'add_pic'
+          ? Icon(
               Icons.add,
               color: primary,
-              size: 100,
+              size: radius,
+            )
+          : ClipOval(
+              child: photoURL.contains('http')
+                  ? CachedNetworkImage(
+                      imageUrl: photoURL,
+                      placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      width: radius * 2,
+                      height: radius * 2,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                      'assets/avatar/$photoURL.jpeg',
+                      width: radius * 2,
+                      height: radius * 2,
+                      fit: BoxFit.cover,
+                    ),
             ),
-          )
-        : CircleAvatar(
-            radius: radius.toDouble(),
-            backgroundImage: photoURL.contains('http')
-                ? NetworkImage(photoURL)
-                : AssetImage('assets/avatar/$photoURL.jpeg')
-                    as ImageProvider<Object>?,
-          );
+    );
   }
 }

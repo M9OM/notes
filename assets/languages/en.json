@@ -2,7 +2,26 @@
     "yes": "Yes",
     "no": "No",
     "cube": "Cube",
+    "private_cube": "Private cube",
+    "enter_password": "Enter password",
+
+
+
+    "end_or_leave": "End or Leave",
+    "leave": "Leave",
+    "end": "End",
+    "ads": "Ads",
+
+    "follow": "Follow",
+
     "setting": "Settings",
+
+
+    "the_cube_has_been_closed": "The cube has been closed",
+
+
+
+
     "friends": "Friends",
     "account_of_developer": "Developer's Account",
     "privcy_policy": "Privacy Policy",

@@ -1,17 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:notes/models/members_model.dart';
 import 'package:notes/models/rooms_model.dart';
 import 'package:provider/provider.dart';
-import 'package:notes/utils/constants/color.dart';
-import 'package:notes/services/room_service.dart';
-
-import '../../video_player/video_player_screen.dart';
-
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:notes/utils/constants/color.dart';
 import 'package:notes/services/room_service.dart';
 import '../../video_player/video_player_screen.dart';
 
@@ -25,7 +16,7 @@ class VideoStream extends StatefulWidget {
 }
 
 class _VideoStreamState extends State<VideoStream> {
-  late Stream<Rooms> _roomStream;
+  late Stream<Rooms?> _roomStream;
 
   @override
   void initState() {
@@ -37,40 +28,56 @@ class _VideoStreamState extends State<VideoStream> {
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
 
-    return StreamBuilder<Rooms>(
+    if (user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return StreamBuilder<Rooms?>(
       stream: _roomStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
+        if (snapshot.hasError) {
+          return const Center(child: Text('An error occurred.'));
+        }
+
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const SizedBox.shrink();
+        }
+
         var roomData = snapshot.data!;
         var videoId = roomData.videoId ?? '';
-        List<Member> member_list = roomData.membersId ?? [];
+        List<Member> memberList = roomData.membersId;
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 110),
             if (videoId.isNotEmpty)
               Stack(
                 children: [
-                  VideoPlayerScreen(videoId: videoId,roomId:widget.roomId, isAdmin:member_list[0].uid == user!.uid
-                            ),
+                  VideoPlayerScreen(
+                    videoId: videoId,
+                    roomId: widget.roomId,
+                    isAdmin: memberList.isNotEmpty && memberList[0].uid == user.uid,
+                  ),
                   Positioned(
                     top: 0,
                     right: 0,
                     child: IconButton(
                       onPressed: () {
-                        member_list[0].uid == user!.uid
-                            ? ChatService().setVideo(widget.roomId, '')
-                            : null;
+                        if (memberList.isNotEmpty && memberList[0].uid == user.uid) {
+                          ChatService().setVideo(widget.roomId, '');
+                        }
                       },
-                      icon: Icon(Icons.close,
-                          color: member_list[0].uid == user!.uid
-                              ? Colors.white
-                              : Colors.grey),
+                      icon: Icon(
+                        Icons.close,
+                        color: memberList.isNotEmpty && memberList[0].uid == user.uid
+                            ? Colors.white
+                            : Colors.grey,
+                      ),
                     ),
                   )
                 ],

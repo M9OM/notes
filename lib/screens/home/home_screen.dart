@@ -9,8 +9,6 @@ import 'package:notes/screens/add_room/add_room.dart';
 import 'package:notes/screens/auth/login_screen.dart';
 import 'package:notes/screens/home/components/room_list/room_general.dart';
 import 'package:notes/screens/home/components/room_list/room_home.dart';
-import 'package:notes/services/auth_service.dart';
-import 'package:notes/services/follow_service.dart';
 import 'package:notes/ui/avatar_widget.dart';
 import 'package:notes/utils/constants/lang/str_extntion.dart';
 import 'package:notes/utils/constants/lang/translate_constat.dart';
@@ -22,7 +20,6 @@ import '../../ui/background.dart';
 import '../../utils/constants/assets_constants.dart';
 import '../../utils/constants/color.dart';
 import 'components/drawer.dart';
-import 'components/rooms_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

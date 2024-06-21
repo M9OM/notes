@@ -8,10 +8,10 @@ BorderRadiusGeometry borderRadiusOther = const BorderRadius.all(
 BorderRadiusGeometry borderRadiusMe = const BorderRadius.all(
   Radius.circular(50),
 );
-TextStyle  yourNameMsgStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 16);
+TextStyle  yourNameMsgStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 15);
 
-TextStyle  myMsgStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.black, fontSize: 15);
-TextStyle  yourMsgStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 15);
+TextStyle  myMsgStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.black, fontSize: 17);
+TextStyle  yourMsgStyle = const TextStyle(fontWeight: FontWeight.w200,color: Colors.white,fontSize: 14);
 TextStyle  myMsgtimeStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.black, fontSize: 12,
 );
 TextStyle  yourMsgtimeStyle = const TextStyle(fontWeight: FontWeight.w700,color: Colors.white,fontSize: 12,
@@ -37,6 +37,28 @@ const Map<int, Color> colorMap = {
   800: Color.fromRGBO(203, 255, 151, .9),
   900: Color.fromRGBO(203, 255, 151, 1),
 };
+final InputDecorationTheme inputDecorationTheme = InputDecorationTheme(
+  
+  focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: primary, width: 1.0),
+    borderRadius: BorderRadius.circular(8.0),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.grey, width: 1.0),
+    borderRadius: BorderRadius.circular(8.0),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: const Color.fromARGB(255, 134, 113, 111), width: 1.0),
+    borderRadius: BorderRadius.circular(8.0),
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.red, width: 1.0),
+    borderRadius: BorderRadius.circular(8.0),
+  ),
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(8.0),
+  ),
+);
 
 // Create a MaterialColor
 const MaterialColor customSwatch = MaterialColor(0xFFCBFF97, colorMap);

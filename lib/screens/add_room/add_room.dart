@@ -12,6 +12,7 @@ import 'package:notes/services/room_service.dart';
 import 'package:notes/utils/constants/color.dart';
 import 'package:notes/utils/constants/lang/str_extntion.dart';
 import 'package:notes/utils/constants/lang/translate_constat.dart';
+import 'package:notes/utils/constants/screenSize.dart';
 import 'package:notes/utils/enum/RoomType.dart';
 import 'package:provider/provider.dart';
 import 'package:random_string/random_string.dart';
@@ -19,7 +20,6 @@ import 'package:random_string/random_string.dart';
 import '../../controllers/room_controller.dart';
 import '../../route/route_screen.dart';
 import '../../ui/background.dart';
-import 'components/avatar_room_list.dart';
 
 class AddRoomScreen extends StatelessWidget {
   const AddRoomScreen({Key? key}) : super(key: key);
@@ -35,9 +35,12 @@ class AddRoomScreenBody extends StatefulWidget {
   State<AddRoomScreenBody> createState() => _AddRoomScreenBodyState();
 }
 
-class _AddRoomScreenBodyState extends State<AddRoomScreenBody> {
+class _AddRoomScreenBodyState extends State<AddRoomScreenBody>
+    with SingleTickerProviderStateMixin {
   final TextEditingController nameRoomController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   RoomType selectedRoomType = RoomType.games;
+  bool isPrivateRoom = false;
 
   String generateUniqueId(String name) {
     String randomLetters = randomAlpha(3); // Generates 3 random letters
@@ -48,22 +51,23 @@ class _AddRoomScreenBodyState extends State<AddRoomScreenBody> {
   @override
   void dispose() {
     nameRoomController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
-        final loadingController = Provider.of<LoadingController?>(context);
-
+    final loadingController = Provider.of<LoadingController?>(context);
     final roomController = Provider.of<RoomController>(context);
     String roomId = generateUniqueId(nameRoomController.text);
+
     return ModalProgressHUD(
-            inAsyncCall: loadingController!.isloading,
-            color: Colors.black,
-            blur: 5.0,
-            opacity: 0.5,
-            progressIndicator: CupertinoActivityIndicator(radius: 15),
+      inAsyncCall: loadingController!.isloading,
+      color: Colors.black,
+      blur: 5.0,
+      opacity: 0.5,
+      progressIndicator: CupertinoActivityIndicator(radius: 15),
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
@@ -80,154 +84,148 @@ class _AddRoomScreenBodyState extends State<AddRoomScreenBody> {
             ), // Set the text color to white or any other color
           ),
         ),
-        body: Mybackground(
-          mainAxisAlignment: MainAxisAlignment.start,
-          screens: [
-            const SizedBox(
-              height: 150,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                TranslationConstants.name_cube.t(context),
-                style: const TextStyle(fontSize: 19),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: nameRoomController,
-                inputFormatters: [
-                  LengthLimitingTextInputFormatter(45), // Limit to 30 characters
-                ],
-                decoration: InputDecoration(
-                  hintText: TranslationConstants.ex_come_tomy_cube.t(context),
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  filled: true,
-                  fillColor: Theme.of(context).highlightColor,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(
-                        color: Theme.of(context)
-                            .primaryColor), // Border color when focused
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: SingleChildScrollView(
+            child: Mybackground(
+              mainAxisAlignment: MainAxisAlignment.start,
+              screens: [
+                const SizedBox(height: 150),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    TranslationConstants.name_cube.t(context),
+                    style: const TextStyle(fontSize: 19),
                   ),
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    // Update the text in the TextField
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                TranslationConstants.category.t(context),
-                style: const TextStyle(fontSize: 19),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: RoomType.values.map((type) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedRoomType = type;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            width: 1,
-                            color:
-                                selectedRoomType == type ? primary : Colors.grey,
-                          )),
-                      child: Text(
-                        getTypeName(type, context),
-                        style: const TextStyle(color: Colors.white),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextField(
+                    controller: nameRoomController,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(
+                          35), // Limit to 35 characters
+                    ],
+                    decoration: InputDecoration(
+                      hintText:
+                          TranslationConstants.ex_come_tomy_cube.t(context),
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      filled: true,
+                      fillColor: Theme.of(context).highlightColor,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor,
+                        ), // Border color when focused
                       ),
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    TranslationConstants.category.t(context),
+                    style: const TextStyle(fontSize: 19),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: RoomType.values.map((type) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedRoomType = type;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              width: 1,
+                              color: selectedRoomType == type
+                                  ? primary
+                                  : Colors.grey,
+                            ),
+                          ),
+                          child: Text(
+                            getTypeName(type, context),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        TranslationConstants.private_cube.t(context),
+                        style: const TextStyle(fontSize: 19),
+                      ),
+                      Switch(
+                        activeColor: primary,
+                        value: isPrivateRoom,
+                        onChanged: (value) {
+                          setState(() {
+                            isPrivateRoom = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.linear,
+                  child: isPrivateRoom
+                      ? Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: TextField(
+                            controller: passwordController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              hintText: TranslationConstants.enter_password
+                                  .t(context),
+                              hintStyle: const TextStyle(color: Colors.grey),
+                              filled: true,
+                              fillColor: Theme.of(context).highlightColor,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor,
+                                ), // Border color when focused
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ),
+                SizedBox(
+                  height: ScreenSizeExtension(context).screenHeight * 0.5,
+                ),
+              ],
             ),
-      
-            // const Padding(
-            //   padding: EdgeInsets.all(8.0),
-            //   child: Text(
-            //     'صورة العرض',
-            //     style: TextStyle(fontSize: 19),
-            //   ),
-            // ),
-      
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 16),
-            //   child: InkWell(
-            //       onTap: () {
-            //         showModalBottomSheet(
-            //           context: context,
-            //           builder: (BuildContext context) {
-            //             return const AvatarRoomList();
-            //           },
-            //         );
-            //       },
-            //       child: roomController.pathImageRoomAvatar == ''
-            //           ? Stack(
-            //               alignment: AlignmentDirectional.center,
-            //               children: [
-            //                 const Icon(
-            //                   Icons.add,
-            //                   size: 50,
-            //                   color: Colors.grey,
-            //                 ),
-            //                 Container(
-            //                   width: 100,
-            //                   height: 100,
-            //                   decoration: BoxDecoration(
-            //                     color: GetThemeData(context).theme.highlightColor,
-            //                     borderRadius: BorderRadius.circular(20),
-            //                   ),
-            //                 ),
-            //               ],
-            //             )
-            //           : Container(
-            //               width: 100,
-            //               height: 100,
-            //               decoration: BoxDecoration(
-            //                 borderRadius: BorderRadius.circular(20),
-            //                 image: DecorationImage(
-            //                   image: AssetImage(
-            //                       'assets/avatar/${roomController.pathImageRoomAvatar}.jpeg'),
-            //                   fit: BoxFit.cover, // Adjust the fit as needed
-            //                 ),
-            //               ),
-            //             )),
-            // ),
-      
-            // Center(
-            //   child: Text(
-            //     nameRoomController.text.isNotEmpty
-            //         ? generateUniqueId(
-            //                 nameRoomController.text.replaceAll(' ', ''))
-            //             .trim()
-            //         : '',
-            //     style: const TextStyle(fontSize: 16, color: Colors.white),
-            //   ),
-            // ),
-          ],
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
-          child:
-              const Icon(Icons.arrow_forward_ios, size: 25, color: Colors.black),
+          child: const Icon(Icons.arrow_forward_ios,
+              size: 25, color: Colors.black),
           onPressed: () async {
             if (nameRoomController.text.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -247,16 +245,18 @@ class _AddRoomScreenBodyState extends State<AddRoomScreenBody> {
               );
             } else {
               final currentUserData = await AuthService().getCurrentUserData();
-      loadingController!.loading(true);
+              loadingController!.loading(true);
               await ChatService().createRoom(
                 nameRoomController.text,
                 roomId,
                 user!.uid,
                 currentUserData!.photoURL!,
                 roomType: selectedRoomType.name,
+                isPrivate: isPrivateRoom,
+                password: isPrivateRoom ? passwordController.text : null,
               );
-      loadingController!.loading(false);
-      
+              loadingController!.loading(false);
+
               navigateScreenWithoutGoBack(context, RoomScreen(roomId: roomId));
             }
           },

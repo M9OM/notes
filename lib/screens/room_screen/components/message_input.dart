@@ -66,12 +66,12 @@ class _MessageInputState extends State<MessageInput>
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.all(25.0),
+      padding: const EdgeInsets.all(18.0),
       child: Row(
         children: <Widget>[
           Expanded(
             child: TextField(
-              maxLines: 4,
+              maxLines: 3,
               minLines: 1,
               style: const TextStyle(),
               controller: chatController.messageController,

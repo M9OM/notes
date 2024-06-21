@@ -11,8 +11,7 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart' as youtube;
 
 class VideoPickerScreen extends StatefulWidget {
   @override
-
-    const VideoPickerScreen({
+  const VideoPickerScreen({
     Key? key,
     required this.roomId,
   }) : super(key: key);
@@ -26,12 +25,14 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
   TextEditingController _searchController = TextEditingController();
   List<youtube.Video> _searchResults = [];
   bool loading = false;
-  Future _searchVideos(String query) async {
+
+  Future<void> _searchVideos(String query) async {
     youtube.YoutubeExplode ytExplode = youtube.YoutubeExplode();
     var searchList = await ytExplode.search.getVideos(query);
 
     setState(() {
-      _searchResults = searchList;
+      // Filter out live videos
+      _searchResults = searchList.where((video) => !video.isLive).toList();
     });
     ytExplode.close();
   }
@@ -50,15 +51,14 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(72, 0, 0, 0),
-        title:  Text(TranslationConstants.select_clip.t(context)),
+        title: Text(TranslationConstants.select_clip.t(context)),
       ),
       body: Mybackground(
-        mainAxisAlignment  : MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         screens: [
           const SizedBox(
             height: 130,
@@ -68,8 +68,10 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: primary)),
-                enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: primary)),
+                enabledBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey)),
                 hintText: TranslationConstants.search_video.t(context),
                 suffixIcon: InkWell(
                   onTap: () async {
@@ -114,10 +116,11 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
                 itemBuilder: (context, index) {
                   var video = _searchResults[index];
                   return InkWell(
-                    onTap: () async{
-                    await  ChatService().setVideo(widget.roomId,'' );
+                    onTap: () async {
+                      await ChatService().setVideo(widget.roomId, '');
 
-                      ChatService().setVideo(widget.roomId,video.thumbnails.videoId );
+                      ChatService()
+                          .setVideo(widget.roomId, video.thumbnails.videoId);
                       Navigator.pop(context, video);
                     },
                     borderRadius: BorderRadius.circular(20),
@@ -137,8 +140,7 @@ class _VideoPickerScreenState extends State<VideoPickerScreen> {
                                 ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
                                     child: Image.network(
-                                              fit: BoxFit.cover,
-
+                                      fit: BoxFit.cover,
                                       video.thumbnails.highResUrl,
                                     )),
                                 const SizedBox(

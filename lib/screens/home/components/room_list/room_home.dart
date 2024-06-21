@@ -9,6 +9,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:notes/screens/home/components/rooms_shape.dart';
 import 'package:notes/services/room_service.dart';
 import 'package:notes/models/rooms_model.dart';
+
 class RoomHomeList extends StatefulWidget {
   const RoomHomeList({super.key});
 
@@ -16,7 +17,8 @@ class RoomHomeList extends StatefulWidget {
   _RoomHomeListState createState() => _RoomHomeListState();
 }
 
-class _RoomHomeListState extends State<RoomHomeList> with AutomaticKeepAliveClientMixin {
+class _RoomHomeListState extends State<RoomHomeList>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -108,7 +110,7 @@ class _RoomHomeListState extends State<RoomHomeList> with AutomaticKeepAliveClie
   }
 
   Future<List<String>> _getFollowedUserIds() async {
-            final user = Provider.of<User?>(context, listen: false);
+    final user = Provider.of<User?>(context, listen: false);
 
     DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
         .collection('users')
@@ -117,7 +119,8 @@ class _RoomHomeListState extends State<RoomHomeList> with AutomaticKeepAliveClie
 
     if (userSnapshot.exists) {
       Map<String, dynamic>? data = userSnapshot.data() as Map<String, dynamic>?;
-      List<String> followedUserIds = List<String>.from(data?['following'] ?? []);
+      List<String> followedUserIds =
+          List<String>.from(data?['following'] ?? []);
       return followedUserIds;
     }
     return [];
@@ -180,7 +183,7 @@ class _RoomHomeListState extends State<RoomHomeList> with AutomaticKeepAliveClie
           if (room == null) {
             return ListTile(title: Text('add friends'));
           }
-               if (_RoomHomeList.isEmpty) {
+          if (_RoomHomeList.isEmpty) {
             return Center(child: CupertinoActivityIndicator());
           }
           return RoomsShape(
@@ -188,7 +191,10 @@ class _RoomHomeListState extends State<RoomHomeList> with AutomaticKeepAliveClie
             imageUrl: room.avtarRoomUrl,
             title: room.roomName,
             subtitle: room.roomType,
+            is_playing: room.videoId != '',
             membersData: room.membersData,
+            isPrivate: room.isPrivate,
+            password: room.password,
           );
         },
       ),

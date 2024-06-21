@@ -43,6 +43,7 @@ Future<void> loadEnglishValue() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
 
   await SupabaseConfig.init();
@@ -120,8 +121,8 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'مكان',
             theme: ThemeData(
+              inputDecorationTheme: inputDecorationTheme,
               primaryColor: const Color(0xFFCBFF97),
-              primarySwatch: customSwatch,
               fontFamily: 'arabic',
               brightness: Brightness.dark,
             ),

@@ -17,7 +17,7 @@ class FollowersWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-        final user = Provider.of<User?>(context);
+    final user = Provider.of<User?>(context);
 
     return FutureBuilder<List<UserModel>>(
       future: FollowService().getFollowersData(userId),
@@ -51,32 +51,37 @@ class FollowersWidget extends StatelessWidget {
                   Stack(
                     alignment: AlignmentDirectional.bottomStart,
                     children: [
-    AvatarWidget(radius:40, photoURL:follower.photoURL.toString()),
-
-
+                      AvatarWidget(
+                          radius: 40, photoURL: follower.photoURL.toString()),
                       Positioned(
                           top: 50,
                           right: -10,
-                          child:StreamBuilder<bool>(
-                  stream: FollowService().isFollowing(user!.uid, follower.uid.toString()),
-                  initialData: false,
-                  builder: (context, snapshot) {
-                    return snapshot.data == true
-                        ? IconButton(onPressed:() async {
-                              await FollowService().unfollowUser(
-                                  follower.uid.toString());
-
-                            }, icon: Icon(Icons.person_remove, color: primary,))
-                        : IconButton(
-                            onPressed: () async {
-                              await FollowService().followUser(
-                                  follower.uid.toString(), follower.playerId.toString());
-
+                          child: StreamBuilder<bool>(
+                            stream: FollowService().isFollowing(
+                                user!.uid, follower.uid.toString()),
+                            initialData: false,
+                            builder: (context, snapshot) {
+                              return snapshot.data == true
+                                  ? IconButton(
+                                      onPressed: () async {
+                                        await FollowService().unfollowUser(
+                                            follower.uid.toString());
+                                      },
+                                      icon: Icon(
+                                        Icons.person_remove,
+                                        color: primary,
+                                      ))
+                                  : IconButton(
+                                      onPressed: () async {
+                                        await FollowService().followUser(
+                                            follower.uid.toString(),
+                                            follower.playerId.toString());
+                                      },
+                                      icon: Icon(Icons.person_add,
+                                          color: primary),
+                                    );
                             },
-                            icon: Icon(Icons.person_add,color: primary),
-                          );
-                  },
-                ))
+                          ))
                     ],
                   ),
                   const SizedBox(height: 8.0),
